@@ -1,4 +1,4 @@
-public class Game_12345678 {
+public class Game {
 
     public static void main(String[] args) {
         String path = args[0];
