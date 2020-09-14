@@ -1,4 +1,4 @@
-public class AirWarrior extends Warrior_12345678 implements WarriorTypeInterface_12345678 {
+public class AirWarrior extends Warrior implements WarriorTypeInterface {
 
     public AirWarrior() {
         super();

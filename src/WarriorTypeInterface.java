@@ -1,4 +1,4 @@
-public interface WarriorTypeInterface_12345678 {
+public interface WarriorTypeInterface {
 
     void performSpecialAbility();
     void specialAbilityCompleted();
