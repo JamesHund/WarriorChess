@@ -1,6 +1,7 @@
-public class StoneWarrior extends Warrior implements WarriorTypeInterface {
+package game;
+public class WaterWarrior extends Warrior implements WarriorTypeInterface{
 
-    public StoneWarrior() {
+    public WaterWarrior() {
         super();
     }
 
@@ -9,4 +10,5 @@ public class StoneWarrior extends Warrior implements WarriorTypeInterface {
 
     public void specialAbilityCompleted() {
     }
+
 }

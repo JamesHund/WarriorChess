@@ -1,13 +1,12 @@
-public class WaterWarrior extends Warrior implements WarriorTypeInterface{
+package game;
+public class FlameWarrior extends Warrior implements WarriorTypeInterface {
 
-    public WaterWarrior() {
+    public FlameWarrior() {
         super();
     }
-
     public void performSpecialAbility() {
     }
 
     public void specialAbilityCompleted() {
     }
-
 }

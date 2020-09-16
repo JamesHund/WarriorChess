@@ -1,3 +1,4 @@
+package game;
 public class AirWarrior extends Warrior implements WarriorTypeInterface {
 
     public AirWarrior() {

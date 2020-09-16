@@ -1,3 +1,4 @@
+package game;
 public class Warrior{
 	private int age;
 	private double health, offense, defense;

@@ -1,8 +1,10 @@
-public class FlameWarrior extends Warrior implements WarriorTypeInterface {
+package game;
+public class StoneWarrior extends Warrior implements WarriorTypeInterface {
 
-    public FlameWarrior() {
+    public StoneWarrior() {
         super();
     }
+
     public void performSpecialAbility() {
     }
 
