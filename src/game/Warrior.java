@@ -6,7 +6,7 @@ public class Warrior{
 	//list of weapons
 	
 	public Warrior() {
-		
+		//test
 	}
 
 	public void backupValues() {
