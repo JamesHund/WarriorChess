@@ -1,13 +1,14 @@
 package game;
 public class Warrior{
-	private int id,age, offense, defense, invSize;
-	private double health;
+	private int id,age, invSize;
+	private double health, offense, defense;
 	private Position position;
 	private String type, moves;
 	//list of movements
+	private int numWeapons = 0;
 	//list of weapons
 
-	public Warrior(Position position, int id, int age, double health, int offense, int defense, String type, int invSize, String moves) {
+	public Warrior(Position position, int id, int age, double health, double offense, double defense, String type, int invSize, String moves) {
 		this.position = position;
 		this.id = id;
 		this.age = age;
@@ -17,6 +18,14 @@ public class Warrior{
 		this.type = type;
 		this.invSize = invSize;
 		this.moves = moves;
+	}
+
+	public Position getPosition(){
+		return position;
+	}
+
+	public int getId() {
+		return id;
 	}
 
 	public void backupValues() {
@@ -93,5 +102,9 @@ public class Warrior{
 		// TODO Auto-generated method stub
 		
 	}
-	
+
+	@Override
+	public String toString() {
+		return String.format("%o, %o, %.1f, %.1f, %.1f, %o, %s, %o, %o", id, age, health, offense, defense, numWeapons, type, position.getY(), position.getX());
+	}
 }
