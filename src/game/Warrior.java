@@ -1,17 +1,27 @@
 package game;
 public class Warrior{
-	private int age;
-	private double health, offense, defense;
+	private int id,age, offense, defense, invSize;
+	private double health;
+	private Position position;
+	private String type, moves;
 	//list of movements
 	//list of weapons
-	
-	public Warrior() {
-		//test
+
+	public Warrior(Position position, int id, int age, double health, int offense, int defense, String type, int invSize, String moves) {
+		this.position = position;
+		this.id = id;
+		this.age = age;
+		this.health = health;
+		this.offense = offense;
+		this.defense = defense;
+		this.type = type;
+		this.invSize = invSize;
+		this.moves = moves;
 	}
 
 	public void backupValues() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void decrementWarriorInvisibility() {
