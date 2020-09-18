@@ -11,8 +11,8 @@ public class Game {
     public static int currentIteration = 0;
     public static int[] gridSize = new int[2]; // x - 0 (number of columns), y - 1 (number of rows)
 
-    public static ArrayList<Warrior> warriors = new ArrayList<Warrior>();
-    public static Water water = new Water(null);
+    public static ArrayList<WarriorTypeInterface> warriors = new ArrayList<WarriorTypeInterface>();
+    public static Water water;
 
     public static void main(String[] args) {
 
@@ -34,10 +34,6 @@ public class Game {
         parseSetupFile(path);
         validateCells();
 
-        for (Warrior w : warriors) {
-            System.out.println(w);
-        }
-
         int outputVersion;
         try {
             outputVersion = Integer.parseInt(args[1]);
@@ -48,17 +44,22 @@ public class Game {
         if (outputVersion == 0) {
             // warrior statistics mode
             printStatistics();
+            System.out.println();
             for(int i = 0; i < iterations; i++){
                 iterate();
                 printStatistics();
+                System.out.println();
             }
 
         } else if (outputVersion == 1) {
             // warrior statistics with visualization mode
             printVisualization();
+            System.out.println();
             for(int i = 0; i < iterations; i++){
+                //System.out.printf("\nCurrent iteration: %o\n", currentIteration);
                 iterate();
                 printVisualization();
+                System.out.println();
             }
         } else {
             System.out.println("Usage: < program name > < name of the game setup file > .txt");
@@ -76,12 +77,33 @@ public class Game {
 
     //steps the game forward in time a single iteration
     public static void iterate(){
-        water.iterate();
         currentIteration++;
+        //battle stage
+        for(WarriorTypeInterface warrior : warriors){
+            for(WarriorTypeInterface warrior2 : warriors){
+                if(warrior2.getPosition().isInNeighborhood(warrior.getPosition())){
+                    if(warrior.getDefense() < warrior2.getDefense()){
+                        boolean alive = warrior.reduceBufferHealth(warrior2.getOffense());
+                        System.out.println("Entered loop");
+                        if(!alive){ warrior.markWarriorDead(); }
+                    }
+                }
+            }
+        }
+        for(WarriorTypeInterface warrior : warriors){
+            warrior.updateValues();
+            if(!warrior.isWarriorAlive()){
+                warriors.remove(warrior);
+                continue;
+            }
+            warrior.move();
+            warrior.incrementAge();
+        }
+        water.iterate();
+
     }
 
     private static void printStatistics() {
-        System.out.println();
         Warrior[] sortedWarriors = warriors.toArray(new Warrior[warriors.size()]);
 
         for(int i = 0; i < sortedWarriors.length; i++){
@@ -110,17 +132,56 @@ public class Game {
 
 
     private static void printVisualization() {
+        int[][] warriorPositions = getWarriorPositions();
+        char[][] board = new char[gridSize[0]][gridSize[1]];
+
+        //populates board with warriors
+        for(int[] warriorPosition : getWarriorPositions()){
+            int xPos = warriorPosition[0];
+            int yPos = warriorPosition[1];
+            int numWarriors = warriorPosition[2];
+
+            if(numWarriors > 1){
+                board[xPos][yPos] = ("" +numWarriors).charAt(0);
+            }else{
+                String type = getFirstWarriorAtPosition(new Position(xPos,yPos)).getType();
+                board[xPos][yPos] = type.charAt(0);
+            }
+        }
+        //everything else
+        for(int y = 0; y < gridSize[1]; y++){
+            for(int x = 0; x < gridSize[1]; x++){
+                if(board[x][y] != 0) continue; //checks whether board position has been populated
+                if(water.isWaterAtPosition(new Position(x,y))){
+                    board[x][y] = 'w';
+                }else{
+                    board[x][y] = '.';
+                }
+
+            }
+        }
+
+        for(int y = 0; y < gridSize[1]; y++) {
+            for (int x = 0; x < gridSize[1]; x++) {
+                System.out.print(board[x][y] + " ");
+            }
+            System.out.println();
+        }
+        printStatistics();
     }
 
     public static void parseSetupFile(String filepath) {
         try {
             Scanner scFile = new Scanner(new File(filepath));
             Scanner scLine = new Scanner(scFile.nextLine()).useDelimiter(" ");
-            iterations = scLine.nextInt();
             int rows = scLine.nextInt();
             int columns = scLine.nextInt();
             gridSize[0] = columns;
             gridSize[1] = rows;
+            iterations = scLine.nextInt();
+
+            water = new Water(null);
+
             while (scFile.hasNextLine()) {
                 scLine = new Scanner(scFile.nextLine()).useDelimiter(": ");
                 String category = scLine.next();
@@ -164,7 +225,7 @@ public class Game {
                         }
 
                         //warriors[i] = warrior;
-                        warriors.add(warrior);
+                        warriors.add((WarriorTypeInterface) warrior);
                     }
 
                 } else if (category.equals("Water")) {
@@ -190,46 +251,64 @@ public class Game {
     //terminates program if a rule is broken
     public static void validateCells(){
         //-----------Warriors------------
-        {
-            //parallel arrays that keep track of warrior positions and number of warriors at that position
-            Position[] positions = new Position[warriors.size()];
-            int[] positionCount = new int[warriors.size()];
-            int numPositions = 0; //number of unique positions
 
-            for (Warrior warrior : warriors) {
-                Position currentPosition = warrior.getPosition();
-                boolean unique = true;
-                int matchingIndex = -1;
-                for (int p = 0; p < numPositions; p++) {
-                    if (currentPosition.equals(positions[p])) {
-                        unique = false;
-                        matchingIndex = p;
-                        break;
-                    }
-                }
+        int[][] warriorPositions = getWarriorPositions();
 
-                if (unique) {
-                    positions[numPositions] = currentPosition;
-                    positionCount[numPositions] = 1;
-                    numPositions++;
-                } else {
-                    positionCount[matchingIndex]++;
-                }
-            }
-
-//            for(int i = 0; i < numPositions; i++){
-//                System.out.println(positions[i] + "    " + positionCount[i]);
-//            }
-
-            for (int count : positionCount) {
-                if(count >= 10){
-                    System.out.println("Error: more than 10 warrior pieces were configured at the same position on the game grid.");
-                    System.exit(0);
-                }
+        for (int[] n : warriorPositions) {
+            if(n[2] >= 10){
+                System.out.println("Error: more than 10 warrior pieces were configured at the same position on the game grid.");
+                System.exit(0);
             }
         }
-
         //-----------------------
+    }
+    //--------------USEFUL METHODS--------------------
+
+
+    //returns a 2d array in the form {{x-coordinate,y-coordinate, number of warriors},...}
+    public static int[][] getWarriorPositions(){
+        //parallel arrays that keep track of warrior positions and number of warriors at that position
+        Position[] positions = new Position[warriors.size()];
+        int[] positionCount = new int[warriors.size()];
+        int numPositions = 0; //number of unique positions
+
+        for (WarriorTypeInterface warrior : warriors) {
+            Position currentPosition = warrior.getPosition();
+            boolean unique = true;
+            int matchingIndex = -1;
+            for (int p = 0; p < numPositions; p++) {
+                if (currentPosition.equals(positions[p])) {
+                    unique = false;
+                    matchingIndex = p;
+                    break;
+                }
+            }
+
+            if (unique) {
+                positions[numPositions] = currentPosition;
+                positionCount[numPositions] = 1;
+                numPositions++;
+            } else {
+                positionCount[matchingIndex]++;
+            }
+        }
+        int[][] hybridArr = new int[numPositions][];
+        for(int i = 0; i < numPositions; i++){
+            hybridArr[i] = new int[]{positions[i].getX(),positions[i].getY(),positionCount[i]};
+        }
+        return hybridArr;
+
+    }
+
+    //loops through warriors and returns the first warrior it finds at Position p
+    //if no such warrior exists the method will return null
+    public static WarriorTypeInterface getFirstWarriorAtPosition(Position p){
+        for(WarriorTypeInterface warrior : warriors){
+            if(p.equals(warrior.getPosition())){
+                return warrior;
+            }
+        }
+        return null;
     }
 
 }

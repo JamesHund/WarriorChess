@@ -4,9 +4,12 @@ public class Warrior{
 	private double health, offense, defense;
 	private Position position;
 	private String type, moves;
-	//list of movements
 	private int numWeapons = 0;
-	//list of weapons
+	private int moveIndex = 0;
+	private boolean warriorAlive = true;
+
+	//buffer fields
+	private double bufferHealth, bufferOffense, bufferDefense;
 
 	public Warrior(Position position, int id, int age, double health, double offense, double defense, String type, int invSize, String moves) {
 		this.position = position;
@@ -18,6 +21,10 @@ public class Warrior{
 		this.type = type;
 		this.invSize = invSize;
 		this.moves = moves;
+
+		bufferHealth = this.health;
+		bufferDefense = this.defense;
+		bufferOffense = this.offense;
 	}
 
 	public Position getPosition(){
@@ -28,9 +35,78 @@ public class Warrior{
 		return id;
 	}
 
-	public void backupValues() {
-		// TODO Auto-generated method stub
+	public double getHealth() { return health; }
 
+	public double getOffense() { return offense; }
+
+	public double getDefense() { return defense; }
+
+	public String getType() { return type; }
+
+	public boolean isWarriorAlive() { return warriorAlive; }
+
+	//returns whether they are alive or not
+	public boolean reduceBufferHealth(double value){
+		bufferHealth -= value;
+		if(bufferHealth <= 0){
+			System.out.println("Dead!");
+			return false;
+		}
+		return true;
+	}
+
+	public void setBufferOffense(double value){
+		bufferOffense = value;
+	}
+
+	public void setBufferDefense(double value){
+		bufferDefense = value;
+	}
+
+	public void markWarriorDead(){
+		warriorAlive = false;
+	}
+	public void updateValues() {
+		offense = bufferOffense;
+		defense = bufferDefense;
+		health = bufferHealth;
+	}
+
+	public void move(){
+		char currentMove = moves.charAt(moveIndex%moves.length());
+		Position offset;
+		switch(currentMove){
+			case 'd':
+				offset = new Position(1,0);
+				break;
+			case 'a':
+				offset = new Position(-1,0);
+				break;
+			case 'w':
+				offset = new Position(0,-1);
+				break;
+			case 'x':
+				offset = new Position(0,1);
+				break;
+			case 'e':
+				offset = new Position(1,-1);
+				break;
+			case 'q':
+				offset = new Position(-1,-1);
+				break;
+			case 'c':
+				offset = new Position(1,1);
+				break;
+			case 'z':
+				offset = new Position(-1,1);
+				break;
+			default: //case 'n'
+				offset = new Position(0,0);
+				break;
+		}
+		//System.out.println("warrior moving" + offset.toString());
+		position = position.add(offset);
+		moveIndex++;
 	}
 
 	public void decrementWarriorInvisibility() {
@@ -59,8 +135,7 @@ public class Warrior{
 	}
 
 	public void incrementAge() {
-		// TODO Auto-generated method stub
-		
+		age++;
 	}
 
 	public void setSpecialAbilityCount(int val) {
@@ -69,36 +144,6 @@ public class Warrior{
 	}
 
 	public void decrementSpecialAbilityCount() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void adjustDefenseStrength(double val) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void adjustOffensePower(double val) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void updateDefenseStrength() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setDefenseStrength(double val) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setOffensePowerStrength(double val) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void adjustHealth(double val) {
 		// TODO Auto-generated method stub
 		
 	}

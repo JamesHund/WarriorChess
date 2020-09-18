@@ -4,7 +4,31 @@ public interface WarriorTypeInterface {
     void performSpecialAbility();
     void specialAbilityCompleted();
 
-    public void backupValues();
+    public Position getPosition();
+
+    public int getId();
+
+    public double getHealth();
+
+    public double getOffense();
+
+    public double getDefense();
+
+    public String getType();
+
+    public boolean isWarriorAlive();
+
+    public boolean reduceBufferHealth(double value);
+
+    public void setBufferOffense(double value);
+
+    public void setBufferDefense(double value);
+
+    public void markWarriorDead();
+
+    public void updateValues();
+
+    public void move();
     
     public void decrementWarriorInvisibility();
     
@@ -21,17 +45,7 @@ public interface WarriorTypeInterface {
     public void setSpecialAbilityCount(int val);
     
     public void decrementSpecialAbilityCount();
-    
-    public void adjustDefenseStrength(double val);
-    
-    public void adjustOffensePower(double val);
-    
-    public void updateDefenseStrength();
-    
-    public void setDefenseStrength(double val);
-    
-    public void setOffensePowerStrength(double val);
-    
-    public void adjustHealth(double val);
+
+    public String toString();
     
 }
