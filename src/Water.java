@@ -1,5 +1,3 @@
-package game;
-
 public class Water {
 
     private boolean[][] grid;

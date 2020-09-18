@@ -1,4 +1,3 @@
-package game;
 public class StoneWarrior extends Warrior implements WarriorTypeInterface {
 
 

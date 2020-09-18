@@ -1,4 +1,3 @@
-package game;
 public interface WarriorTypeInterface {
 
     void performSpecialAbility();
@@ -16,15 +15,11 @@ public interface WarriorTypeInterface {
 
     public String getType();
 
-    public boolean isWarriorAlive();
-
-    public boolean reduceBufferHealth(double value);
+    public boolean adjustBufferHealth(double value);
 
     public void setBufferOffense(double value);
 
     public void setBufferDefense(double value);
-
-    public void markWarriorDead();
 
     public void updateValues();
 

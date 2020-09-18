@@ -1,5 +1,3 @@
-package game;
-
 public class Position {
 
 	private final int x,y;

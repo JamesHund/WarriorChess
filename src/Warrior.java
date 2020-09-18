@@ -1,4 +1,3 @@
-package game;
 public class Warrior{
 	private int id,age, invSize;
 	private double health, offense, defense;
@@ -6,7 +5,6 @@ public class Warrior{
 	private String type, moves;
 	private int numWeapons = 0;
 	private int moveIndex = 0;
-	private boolean warriorAlive = true;
 
 	//buffer fields
 	private double bufferHealth, bufferOffense, bufferDefense;
@@ -43,13 +41,10 @@ public class Warrior{
 
 	public String getType() { return type; }
 
-	public boolean isWarriorAlive() { return warriorAlive; }
-
 	//returns whether they are alive or not
-	public boolean reduceBufferHealth(double value){
-		bufferHealth -= value;
+	public boolean adjustBufferHealth(double value){
+		bufferHealth += value;
 		if(bufferHealth <= 0){
-			System.out.println("Dead!");
 			return false;
 		}
 		return true;
@@ -63,9 +58,6 @@ public class Warrior{
 		bufferDefense = value;
 	}
 
-	public void markWarriorDead(){
-		warriorAlive = false;
-	}
 	public void updateValues() {
 		offense = bufferOffense;
 		defense = bufferDefense;
@@ -136,6 +128,7 @@ public class Warrior{
 
 	public void incrementAge() {
 		age++;
+		//System.out.println(type + "  age++  " + age);
 	}
 
 	public void setSpecialAbilityCount(int val) {
@@ -150,6 +143,6 @@ public class Warrior{
 
 	@Override
 	public String toString() {
-		return String.format("%o, %o, %.1f, %.1f, %.1f, %o, %s, %o, %o", id, age, health, offense, defense, numWeapons, type, position.getY(), position.getX());
+		return String.format("%s, %s, %.1f, %.1f, %.1f, %o, %s, %s, %s", id, age, health, offense, defense, numWeapons, type, position.getY(), position.getX());
 	}
 }
