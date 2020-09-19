@@ -19,7 +19,7 @@ public interface WarriorTypeInterface {
 
     public void setBufferOffense(double value);
 
-    public void setBufferDefense(double value);
+    public void adjustBufferDefense(double value);
 
     public void updateValues();
 

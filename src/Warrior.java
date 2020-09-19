@@ -1,13 +1,30 @@
 public class Warrior{
+	//constants
+	private static final int AGE_STAGE_ONE = 15;
+	private static final int AGE_STAGE_TWO = 25;
+	private static final int AGE_STAGE_THREE = 50;
+
+	private static final double MAX_DEFENSE_ZERO = 100;
+	private static final double MAX_DEFENSE_ONE = 70;
+	private static final double MAX_DEFENSE_TWO = 50;
+	private static final double MAX_DEFENSE_THREE = 30;
+
+	private static final double MAX_OFFENSE = 100;
+	private static final double MAX_HEALTH = 100;
+
+	//instance fields
 	private int id,age, invSize;
 	private double health, offense, defense;
 	private Position position;
 	private String type, moves;
 	private int numWeapons = 0;
 	private int moveIndex = 0;
+	private double maxDefense = MAX_DEFENSE_ZERO;
 
 	//buffer fields
 	private double bufferHealth, bufferOffense, bufferDefense;
+
+
 
 	public Warrior(Position position, int id, int age, double health, double offense, double defense, String type, int invSize, String moves) {
 		this.position = position;
@@ -47,6 +64,9 @@ public class Warrior{
 		if(bufferHealth <= 0){
 			return false;
 		}
+		if(bufferHealth > MAX_HEALTH){
+			bufferHealth = MAX_HEALTH;
+		}
 		return true;
 	}
 
@@ -54,8 +74,11 @@ public class Warrior{
 		bufferOffense = value;
 	}
 
-	public void setBufferDefense(double value){
-		bufferDefense = value;
+	public void adjustBufferDefense(double value){
+		bufferDefense += value;
+		if (bufferDefense > maxDefense){
+			bufferDefense = maxDefense;
+		}
 	}
 
 	public void updateValues() {
@@ -128,7 +151,21 @@ public class Warrior{
 
 	public void incrementAge() {
 		age++;
+		setMaxDefense();
+		adjustBufferDefense(0);
 		//System.out.println(type + "  age++  " + age);
+	}
+
+	private void setMaxDefense(){
+		if(age >= AGE_STAGE_THREE){
+			maxDefense = MAX_DEFENSE_THREE;
+		}else if(age >= AGE_STAGE_TWO){
+			maxDefense = MAX_DEFENSE_TWO;
+		}else if(age >= AGE_STAGE_ONE){
+			maxDefense = MAX_DEFENSE_ONE;
+		}else{
+			maxDefense = MAX_DEFENSE_ZERO;
+		}
 	}
 
 	public void setSpecialAbilityCount(int val) {

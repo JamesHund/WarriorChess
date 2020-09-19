@@ -12,6 +12,16 @@ public class Game {
     public static ArrayList<WarriorTypeInterface> warriors = new ArrayList<>();
     public static Water water;
 
+    public static enum typeCode{
+        A, F, S, W
+    }
+
+    //constants
+    public static final double WATER_HEALTH_BUFF = 3;
+    public static final double WATER_HEALTH_DEBUFF = -0.5;
+    public static final double MULTIPLE_WARRIORS_HEALTH_BUFF = 2;
+
+
     public static void main(String[] args) {
 
         //-----validate arguments-----
@@ -19,6 +29,7 @@ public class Game {
             System.out.println("Usage: < program name > < name of the game setup file > .txt");
             return;
         }
+
 
         String path = args[0];
         try {
@@ -32,6 +43,7 @@ public class Game {
         parseSetupFile(path);
         validateCells();
 
+        System.out.println(typeCode.values()[0]);
         //System.out.println(gridSize[0] + " " + gridSize[1]);
 
         int outputVersion;
@@ -89,11 +101,30 @@ public class Game {
                 }
             }
             if(waterInNeighbourhood){
-                warrior.adjustBufferHealth(3);
+                warrior.adjustBufferHealth(WATER_HEALTH_BUFF);
             }else{
-                warrior.adjustBufferHealth(-0.5);
+                warrior.adjustBufferHealth(WATER_HEALTH_DEBUFF);
             }
         }
+
+        //adjust defence based on warriors of same type in same cell
+        int[][] warriorPositions = getWarriorPositions();
+        for(WarriorTypeInterface warrior : warriors){
+            for(int i = 0; i < warriorPositions.length; i++){
+                int xPos = warriorPositions[i][0];
+                int yPos = warriorPositions[i][1];
+                if(new Position(xPos,yPos).equals(warrior.getPosition())) {
+                    int warriorTypeCode = typeCode.valueOf("" + warrior.getType().charAt(0)).ordinal();
+                    int numSameType = warriorPositions[i][3 + warriorTypeCode];
+                    if(numSameType > 1){
+                        warrior.adjustBufferDefense(MULTIPLE_WARRIORS_HEALTH_BUFF*numSameType);
+                    }
+                }
+            }
+        }
+
+
+
         //battle stage
         ArrayList<WarriorTypeInterface> deadWarriors = new ArrayList<>();
 
@@ -167,7 +198,7 @@ public class Game {
                 String type = "";
                 for(int i = 3; i < 7; i++){
                     if(warriorPosition[i] > 0){
-                        type = "" + ("AFSW").charAt(i - 3);
+                        type = "" + typeCode.values()[i-3];
                     }
                 }
 
