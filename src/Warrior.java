@@ -12,6 +12,8 @@ public class Warrior{
 	private static final double MAX_OFFENSE = 100;
 	private static final double MAX_HEALTH = 100;
 
+	private static final double SPECIAL_ABILITY_THRESHOLD = 10;
+
 	//instance fields
 	private int id,age, invSize;
 	private double health, offense, defense;
@@ -20,13 +22,15 @@ public class Warrior{
 	private int numWeapons = 0;
 	private int moveIndex = 0;
 	private double maxDefense = MAX_DEFENSE_ZERO;
+	private boolean specialAbilityPerformed = false;
+	private int specialAbilityCount;
 
 	//buffer fields
 	private double bufferHealth, bufferOffense, bufferDefense;
 
 
 
-	public Warrior(Position position, int id, int age, double health, double offense, double defense, String type, int invSize, String moves) {
+	public Warrior(Position position, int id, int age, double health, double offense, double defense, String type, int specialAbilityCount, int invSize, String moves) {
 		this.position = position;
 		this.id = id;
 		this.age = age;
@@ -34,6 +38,7 @@ public class Warrior{
 		this.offense = offense;
 		this.defense = defense;
 		this.type = type;
+		this.specialAbilityCount = specialAbilityCount;
 		this.invSize = invSize;
 		this.moves = moves;
 
@@ -42,6 +47,7 @@ public class Warrior{
 		bufferOffense = this.offense;
 	}
 
+	//----------------ACCESSORS---------------------
 	public Position getPosition(){
 		return position;
 	}
@@ -58,26 +64,48 @@ public class Warrior{
 
 	public String getType() { return type; }
 
+	public boolean isSpecialAbilityPerformed() {
+		return specialAbilityPerformed;
+	}
+
+	//----------------MODIFIERS---------------------
+
 	//returns whether they are alive or not
 	public boolean adjustBufferHealth(double value){
 		bufferHealth += value;
 		if(bufferHealth <= 0){
 			return false;
-		}
-		if(bufferHealth > MAX_HEALTH){
+		}else if(bufferHealth <= SPECIAL_ABILITY_THRESHOLD){
+			queueSpecialAbility();
+		}else if(bufferHealth > MAX_HEALTH){
 			bufferHealth = MAX_HEALTH;
 		}
 		return true;
 	}
 
-	public void setBufferOffense(double value){
-		bufferOffense = value;
+	public void adjustBufferOffense(double value){
+		bufferOffense += value;
+		if (bufferOffense > MAX_OFFENSE){
+			bufferOffense = MAX_OFFENSE;
+		}
 	}
-
 	public void adjustBufferDefense(double value){
 		bufferDefense += value;
 		if (bufferDefense > maxDefense){
 			bufferDefense = maxDefense;
+		}
+		if (bufferDefense < 0){
+			bufferDefense = 0;
+		}
+	}
+
+	public void setBufferDefense(double value){
+		bufferDefense = value;
+		if (bufferDefense > maxDefense){
+			bufferDefense = maxDefense;
+		}
+		if (bufferDefense < 0){
+			bufferDefense = 0;
 		}
 	}
 
@@ -124,36 +152,21 @@ public class Warrior{
 		moveIndex++;
 	}
 
-	public void decrementWarriorInvisibility() {
-		// TODO Auto-generated method stub
-		
+	public void queueSpecialAbility() {
+		specialAbilityPerformed = true;
 	}
 
-	public void setWarriorInvisibility(int val) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setInTrance() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setCuredFromTrance() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setSpecialAbilityPerformed() {
-		// TODO Auto-generated method stub
-		
+	public void decrementSpecialAbilityCount() {
+		specialAbilityCount--;
+		if(specialAbilityCount == 0){
+			specialAbilityPerformed = false;
+		}
 	}
 
 	public void incrementAge() {
 		age++;
 		setMaxDefense();
 		adjustBufferDefense(0);
-		//System.out.println(type + "  age++  " + age);
 	}
 
 	private void setMaxDefense(){
@@ -168,14 +181,24 @@ public class Warrior{
 		}
 	}
 
-	public void setSpecialAbilityCount(int val) {
+	public void decrementWarriorInvisibility() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	public void decrementSpecialAbilityCount() {
+	public void setWarriorInvisibility(int val) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	public void setInTrance() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setCuredFromTrance() {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override

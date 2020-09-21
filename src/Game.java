@@ -20,6 +20,8 @@ public class Game {
     public static final double WATER_HEALTH_BUFF = 3;
     public static final double WATER_HEALTH_DEBUFF = -0.5;
     public static final double MULTIPLE_WARRIORS_HEALTH_BUFF = 2;
+    private static final double WATER_WARRIOR_OFFENSE_BUFF = 1;
+
 
 
     public static void main(String[] args) {
@@ -42,8 +44,6 @@ public class Game {
 
         parseSetupFile(path);
         validateCells();
-
-        System.out.println(typeCode.values()[0]);
         //System.out.println(gridSize[0] + " " + gridSize[1]);
 
         int outputVersion;
@@ -93,19 +93,31 @@ public class Game {
         //water
         for(WarriorTypeInterface warrior: warriors){
 
-            boolean waterInNeighbourhood = false;
+            int waterInNeighbourhood = 0;
             for(Position p : warrior.getPosition().getNeighbors()){
                 if(water.isWaterAtPosition(p)){
-                    waterInNeighbourhood = true;
-                    break;
+                    waterInNeighbourhood++;
                 }
             }
-            if(waterInNeighbourhood){
+            if(waterInNeighbourhood > 0){
                 warrior.adjustBufferHealth(WATER_HEALTH_BUFF);
+                if(warrior.getType().equals("Water")){
+                    warrior.adjustBufferOffense(WATER_WARRIOR_OFFENSE_BUFF*waterInNeighbourhood);
+                }
+
             }else{
                 warrior.adjustBufferHealth(WATER_HEALTH_DEBUFF);
             }
         }
+        //perform special abilities
+        for(WarriorTypeInterface warrior : warriors){
+            if(warrior.isSpecialAbilityPerformed()){
+                warrior.decrementSpecialAbilityCount();
+                warrior.performSpecialAbility();
+            }
+        }
+
+
 
         //adjust defence based on warriors of same type in same cell
         int[][] warriorPositions = getWarriorPositions();
@@ -122,7 +134,6 @@ public class Game {
                 }
             }
         }
-
 
 
         //battle stage
@@ -148,10 +159,13 @@ public class Game {
             warrior.move();
             warrior.incrementAge();
         }
-        if(warriors.size() == 1){
-
-        }
         water.iterate();
+        validateNumberOfWarriors();
+
+        if(warriors.size() == 1){
+            System.out.println("A warrior has been proven victor!");
+            System.exit(0);
+        }
 
     }
 
@@ -184,7 +198,7 @@ public class Game {
 
 
     private static void printVisualization() {
-        char[][] board = new char[gridSize[0]][gridSize[1]];
+        String[][] board = new String[gridSize[0]][gridSize[1]];
 
         //populates board with warriors
         for(int[] warriorPosition : getWarriorPositions()){
@@ -193,7 +207,7 @@ public class Game {
             int numWarriors = warriorPosition[2];
 
             if(numWarriors > 1){
-                board[xPos][yPos] = ("" +numWarriors).charAt(0);
+                board[xPos][yPos] = "" + numWarriors;
             }else{
                 String type = "";
                 for(int i = 3; i < 7; i++){
@@ -202,17 +216,17 @@ public class Game {
                     }
                 }
 
-                board[xPos][yPos] = type.charAt(0);
+                board[xPos][yPos] = "" + type.charAt(0);
             }
         }
         //everything else
         for(int y = 0; y < gridSize[1]; y++){
             for(int x = 0; x < gridSize[0]; x++){
-                if(board[x][y] != 0) continue; //checks whether board position has been populated
+                if(board[x][y] != null) continue; //checks whether board position has been populated
                 if(water.isWaterAtPosition(new Position(x,y))){
-                    board[x][y] = 'w';
+                    board[x][y] = "w";
                 }else{
-                    board[x][y] = '.';
+                    board[x][y] = ".";
                 }
 
             }
@@ -312,8 +326,19 @@ public class Game {
         int[][] warriorPositions = getWarriorPositions();
 
         for (int[] n : warriorPositions) {
-            if(n[2] >= 10){
+            if(n[2] > 10){
                 System.out.println("Error: more than 10 warrior pieces were configured at the same position on the game grid.");
+                System.exit(0);
+            }
+        }
+    }
+
+    public static void validateNumberOfWarriors(){
+        int[][] warriorPositions = getWarriorPositions();
+
+        for (int[] n : warriorPositions) {
+            if(n[2] > 10){
+                System.out.printf("Error: warrior limit exceeded at cell %s %s\n",n[1],n[0]);
                 System.exit(0);
             }
         }

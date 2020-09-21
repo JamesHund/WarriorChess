@@ -15,11 +15,15 @@ public interface WarriorTypeInterface {
 
     public String getType();
 
+    public boolean isSpecialAbilityPerformed();
+
     public boolean adjustBufferHealth(double value);
 
-    public void setBufferOffense(double value);
+    public void adjustBufferOffense(double value);
 
     public void adjustBufferDefense(double value);
+
+    public void setBufferDefense(double value);
 
     public void updateValues();
 
@@ -33,14 +37,13 @@ public interface WarriorTypeInterface {
     
     public void setCuredFromTrance();
     
-    public void setSpecialAbilityPerformed();
+    public void queueSpecialAbility();
     
     public void incrementAge();
-    
-    public void setSpecialAbilityCount(int val);
     
     public void decrementSpecialAbilityCount();
 
     public String toString();
-    
+
+
 }
