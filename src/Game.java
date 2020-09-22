@@ -12,7 +12,7 @@ public class Game {
     public static ArrayList<WarriorTypeInterface> warriors = new ArrayList<>();
     public static Water water;
 
-    public static enum typeCode{
+    public enum typeCode{
         A, F, S, W
     }
 
@@ -122,14 +122,14 @@ public class Game {
         //adjust defense based on warriors of same type in same cell
         int[][] warriorPositions = getWarriorPositions();
         for(WarriorTypeInterface warrior : warriors){
-            for(int i = 0; i < warriorPositions.length; i++){
-                int xPos = warriorPositions[i][0];
-                int yPos = warriorPositions[i][1];
-                if(new Position(xPos,yPos).equals(warrior.getPosition())) {
+            for (int[] warriorPosition : warriorPositions) {
+                int xPos = warriorPosition[0];
+                int yPos = warriorPosition[1];
+                if (new Position(xPos, yPos).equals(warrior.getPosition())) {
                     int warriorTypeCode = typeCode.valueOf("" + warrior.getType().charAt(0)).ordinal();
-                    int numSameType = warriorPositions[i][3 + warriorTypeCode];
-                    if(numSameType > 1){
-                        warrior.adjustBufferDefense(MULTIPLE_WARRIORS_HEALTH_BUFF*(numSameType-1));
+                    int numSameType = warriorPosition[3 + warriorTypeCode];
+                    if (numSameType > 1) {
+                        warrior.adjustBufferDefense(MULTIPLE_WARRIORS_HEALTH_BUFF * (numSameType - 1));
                     }
                 }
             }
@@ -171,7 +171,7 @@ public class Game {
     }
 
     private static void printStatistics() {
-        Warrior[] sortedWarriors = warriors.toArray(new Warrior[warriors.size()]);
+        WarriorTypeInterface[] sortedWarriors = warriors.toArray(new WarriorTypeInterface[warriors.size()]);
 
         for(int i = 0; i < sortedWarriors.length; i++){
             for(int j = i + 1; j < sortedWarriors.length; j++){
@@ -180,19 +180,19 @@ public class Game {
                 int relativePosI = posI.getY()*gridSize[1] + posI.getX();
                 int relativePosJ = posJ.getY()*gridSize[1] + posJ.getX();
                 if(relativePosJ < relativePosI){
-                    Warrior temp = sortedWarriors[i];
+                    WarriorTypeInterface temp = sortedWarriors[i];
                     sortedWarriors[i] = sortedWarriors[j];
                     sortedWarriors[j] = temp;
                 }else if(relativePosI == relativePosJ){
                     if(sortedWarriors[j].getId() < sortedWarriors[i].getId()){
-                        Warrior temp = sortedWarriors[i];
+                        WarriorTypeInterface temp = sortedWarriors[i];
                         sortedWarriors[i] = sortedWarriors[j];
                         sortedWarriors[j] = temp;
                     }
                 }
             }
         }
-        for(Warrior warrior : sortedWarriors){
+        for(WarriorTypeInterface warrior : sortedWarriors){
             System.out.println(warrior);
         }
     }
