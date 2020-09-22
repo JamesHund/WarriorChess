@@ -4,12 +4,25 @@ public class AirWarrior extends Warrior implements WarriorTypeInterface {
         super(position, id, age, health, offense, defense, "Air", 3, invSize, moves);
     }
 
-    public void performSpecialAbility() {
+    //called when special ability initially performed
+    private void initialSpecial(){
         System.out.println("Special ability performed by air warrior!");
+        adjustBufferOffense(30);
+    }
 
+    public void performSpecialAbility() {
+        if(getSpecialAbilityCount() == getSpecialAbilityTotalCount()){
+            initialSpecial();
+        }
+        if(getSpecialAbilityCount() == 0){
+            specialAbilityCompleted();
+        }
 
     }
 
     public void specialAbilityCompleted() {
+        adjustBufferOffense(-30);
     }
+
+
 }

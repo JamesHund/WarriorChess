@@ -111,15 +111,15 @@ public class Game {
         }
         //perform special abilities
         for(WarriorTypeInterface warrior : warriors){
-            if(warrior.isSpecialAbilityPerformed()){
-                warrior.decrementSpecialAbilityCount();
+            if(warrior.isSpecialAbilityBeingPerformed()){
                 warrior.performSpecialAbility();
+                warrior.decrementSpecialAbilityCount();
             }
         }
 
 
 
-        //adjust defence based on warriors of same type in same cell
+        //adjust defense based on warriors of same type in same cell
         int[][] warriorPositions = getWarriorPositions();
         for(WarriorTypeInterface warrior : warriors){
             for(int i = 0; i < warriorPositions.length; i++){
@@ -129,7 +129,7 @@ public class Game {
                     int warriorTypeCode = typeCode.valueOf("" + warrior.getType().charAt(0)).ordinal();
                     int numSameType = warriorPositions[i][3 + warriorTypeCode];
                     if(numSameType > 1){
-                        warrior.adjustBufferDefense(MULTIPLE_WARRIORS_HEALTH_BUFF*numSameType);
+                        warrior.adjustBufferDefense(MULTIPLE_WARRIORS_HEALTH_BUFF*(numSameType-1));
                     }
                 }
             }
@@ -143,8 +143,9 @@ public class Game {
             for(WarriorTypeInterface warrior2 : warriors){
                 if(warrior2.getPosition().isInNeighborhood(warrior.getPosition())){
                     if(warrior.getDefense() < warrior2.getDefense()){
-                        boolean alive = warrior.adjustBufferHealth(-1*warrior2.getOffense());
-                        if(!alive) deadWarriors.add(warrior);
+                        warrior.adjustBufferHealth(-1*warrior2.getOffense());
+                        boolean alive = warrior.isAlive();
+                        if(!alive && !deadWarriors.contains(warrior)) deadWarriors.add(warrior);
                     }
                 }
             }

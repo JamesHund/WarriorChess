@@ -3,47 +3,51 @@ public interface WarriorTypeInterface {
     void performSpecialAbility();
     void specialAbilityCompleted();
 
-    public Position getPosition();
+    Position getPosition();
 
-    public int getId();
+    int getId();
 
-    public double getHealth();
+    double getHealth();
 
-    public double getOffense();
+    double getOffense();
 
-    public double getDefense();
+    double getDefense();
 
-    public String getType();
+    String getType();
 
-    public boolean isSpecialAbilityPerformed();
+    int getSpecialAbilityCount();
 
-    public boolean adjustBufferHealth(double value);
+    int getSpecialAbilityTotalCount();
 
-    public void adjustBufferOffense(double value);
+    boolean isSpecialAbilityBeingPerformed();
 
-    public void adjustBufferDefense(double value);
+    boolean isAlive();
 
-    public void setBufferDefense(double value);
+    void adjustBufferHealth(double value);
 
-    public void updateValues();
+    void adjustBufferOffense(double value);
 
-    public void move();
+    void adjustBufferDefense(double value);
+
+    void updateValues();
+
+    void move();
     
-    public void decrementWarriorInvisibility();
+    void incrementAge();
     
-    public void setWarriorInvisibility(int val);
-    
-    public void setInTrance();
-    
-    public void setCuredFromTrance();
-    
-    public void queueSpecialAbility();
-    
-    public void incrementAge();
-    
-    public void decrementSpecialAbilityCount();
+    void decrementSpecialAbilityCount();
 
     public String toString();
+
+
+
+    //    void decrementWarriorInvisibility();
+    //
+    //    void setWarriorInvisibility(int val);
+    //
+    //    void setInTrance();
+    //
+    //    void setCuredFromTrance();
 
 
 }
