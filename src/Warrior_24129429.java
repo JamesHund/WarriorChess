@@ -1,4 +1,4 @@
-public class Warrior{
+public class Warrior_24129429 {
 	//constants
 	private static final int AGE_STAGE_ONE = 15;
 	private static final int AGE_STAGE_TWO = 25;
@@ -14,12 +14,11 @@ public class Warrior{
 
 	private static final double SPECIAL_ABILITY_THRESHOLD = 10;
 
-
-
 	//instance fields
-	private int id,age, invSize;
+	private final int id, invSize;
+	private int age;
 	private double health, offense, defense;
-	private Position position;
+	private Position_24129429 position;
 	private String type, moves;
 	private int numWeapons = 0;
 	private int moveIndex = 0;
@@ -27,7 +26,7 @@ public class Warrior{
 	private boolean alive = true;
 
 	//special ability field
-	private int specialAbilityTotalCount;
+	private final int specialAbilityTotalCount;
 	private int specialAbilityCount;
 	private boolean specialAbilityBeingPerformed = false;
 	private boolean specialAbilityPerformed = false;
@@ -37,7 +36,7 @@ public class Warrior{
 
 
 
-	public Warrior(Position position, int id, int age, double health, double offense, double defense, String type, int specialAbilityTotalCount, int invSize, String moves) {
+	public Warrior_24129429(Position_24129429 position, int id, int age, double health, double offense, double defense, String type, int specialAbilityTotalCount, int invSize, String moves) {
 		this.position = position;
 		this.id = id;
 		this.age = age;
@@ -57,15 +56,9 @@ public class Warrior{
 	}
 
 	//----------------ACCESSORS---------------------
-	public Position getPosition(){
-		return position;
-	}
+	public Position_24129429 getPosition(){ return position; }
 
-	public int getId() {
-		return id;
-	}
-
-	public double getHealth() { return health; }
+	public int getId() { return id; }
 
 	public double getOffense() { return offense; }
 
@@ -104,6 +97,7 @@ public class Warrior{
 			bufferOffense = 0;
 		}
 	}
+
 	public void adjustBufferDefense(double value){
 		bufferDefense += value;
 		if (bufferDefense > maxDefense){
@@ -124,23 +118,11 @@ public class Warrior{
 		}
 	}
 
-	//used for setting offense in child classes
+	//used for setting defense in child classes performing special abilities
+	//defence is not limited by age only by base maximum
 	//not added to WarriorTypeInterface to prevent access from main class
-	void setBufferOffenseSpecial(double value){
-		bufferOffense = value;
-		if (bufferOffense > MAX_OFFENSE){
-			bufferOffense = MAX_OFFENSE;
-		}
-		if (bufferOffense < 0){
-			bufferOffense = 0;
-		}
-
-	}
-
-	//defence is not capped by age
-	//used for setting defense in child classes
-	//not added to WarriorTypeInterface to prevent access from main class
-	void setBufferDefenseSpecial(double value){
+	//protected so that warrior subtypes can access
+	protected void setBufferDefenseSpecial(double value){
 		bufferDefense = value;
 		if (bufferDefense > 100){
 			bufferDefense = 100;
@@ -158,34 +140,34 @@ public class Warrior{
 
 	public void move(){
 		char currentMove = moves.charAt(moveIndex%moves.length());
-		Position offset;
+		Position_24129429 offset;
 		switch(currentMove){
 			case 'd':
-				offset = new Position(1,0);
+				offset = new Position_24129429(1,0);
 				break;
 			case 'a':
-				offset = new Position(-1,0);
+				offset = new Position_24129429(-1,0);
 				break;
 			case 'w':
-				offset = new Position(0,-1);
+				offset = new Position_24129429(0,-1);
 				break;
 			case 'x':
-				offset = new Position(0,1);
+				offset = new Position_24129429(0,1);
 				break;
 			case 'e':
-				offset = new Position(1,-1);
+				offset = new Position_24129429(1,-1);
 				break;
 			case 'q':
-				offset = new Position(-1,-1);
+				offset = new Position_24129429(-1,-1);
 				break;
 			case 'c':
-				offset = new Position(1,1);
+				offset = new Position_24129429(1,1);
 				break;
 			case 'z':
-				offset = new Position(-1,1);
+				offset = new Position_24129429(-1,1);
 				break;
 			default: //case 'n'
-				offset = new Position(0,0);
+				offset = new Position_24129429(0,0);
 				break;
 		}
 		//System.out.println("warrior moving" + offset.toString());
@@ -193,10 +175,10 @@ public class Warrior{
 		moveIndex++;
 	}
 
-	private void queueSpecialAbility() {
-		specialAbilityCount = specialAbilityTotalCount;
-		specialAbilityBeingPerformed = true;
-		specialAbilityPerformed = true;
+	public void incrementAge() {
+		age++;
+		setMaxDefense();
+		adjustBufferDefense(0);
 	}
 
 	public void decrementSpecialAbilityCount() {
@@ -206,10 +188,10 @@ public class Warrior{
 		}
 	}
 
-	public void incrementAge() {
-		age++;
-		setMaxDefense();
-		adjustBufferDefense(0);
+	private void queueSpecialAbility() {
+		specialAbilityCount = specialAbilityTotalCount;
+		specialAbilityBeingPerformed = true;
+		specialAbilityPerformed = true;
 	}
 
 	private void setMaxDefense(){
@@ -223,7 +205,6 @@ public class Warrior{
 			maxDefense = MAX_DEFENSE_ZERO;
 		}
 	}
-
 
 	@Override
 	public String toString() {

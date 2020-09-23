@@ -1,10 +1,15 @@
-public class FlameWarrior extends Warrior implements WarriorTypeInterface {
+public class FlameWarrior_24129429 extends Warrior_24129429 implements WarriorTypeInterface_24129429 {
 
     private double preSpecialDefense;
 
 
-    public FlameWarrior(Position position, int id, int age, double health, double offense, double defense, int invSize, String moves) {
+    public FlameWarrior_24129429(Position_24129429 position, int id, int age, double health, double offense, double defense, int invSize, String moves) {
         super(position, id, age, health, offense, defense, "Flame", 2, invSize, moves);
+    }
+
+    private void initialSpecial(){
+        System.out.println("Special ability performed by flame warrior!");
+        preSpecialDefense = getDefense();
     }
 
     public void performSpecialAbility() {
@@ -20,12 +25,7 @@ public class FlameWarrior extends Warrior implements WarriorTypeInterface {
 
     }
 
-    public void specialAbilityCompleted() {
+    private void specialAbilityCompleted() {
         setBufferDefense(preSpecialDefense);
-    }
-
-    private void initialSpecial(){
-        System.out.println("Special ability performed by flame warrior!");
-        preSpecialDefense = getDefense();
     }
 }

@@ -3,14 +3,14 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Game {
+public class Game_24129429 {
 
     public static int iterations;
     public static int currentIteration = 0;
     public static int[] gridSize = new int[2]; // x - 0 (number of columns), y - 1 (number of rows)
 
-    public static ArrayList<WarriorTypeInterface> warriors = new ArrayList<>();
-    public static Water water;
+    public static ArrayList<WarriorTypeInterface_24129429> warriors = new ArrayList<>();
+    public static Water_24129429 water;
 
     public enum typeCode{
         A, F, S, W
@@ -90,11 +90,11 @@ public class Game {
     public static void iterate(){
         currentIteration++;
 
-        //water
-        for(WarriorTypeInterface warrior: warriors){
+        //perform water related health buffs and health debuffs
+        for(WarriorTypeInterface_24129429 warrior: warriors){
 
             int waterInNeighbourhood = 0;
-            for(Position p : warrior.getPosition().getNeighbors()){
+            for(Position_24129429 p : warrior.getPosition().getNeighbors()){
                 if(water.isWaterAtPosition(p)){
                     waterInNeighbourhood++;
                 }
@@ -109,23 +109,22 @@ public class Game {
                 warrior.adjustBufferHealth(WATER_HEALTH_DEBUFF);
             }
         }
+
         //perform special abilities
-        for(WarriorTypeInterface warrior : warriors){
+        for(WarriorTypeInterface_24129429 warrior : warriors){
             if(warrior.isSpecialAbilityBeingPerformed()){
                 warrior.performSpecialAbility();
                 warrior.decrementSpecialAbilityCount();
             }
         }
 
-
-
         //adjust defense based on warriors of same type in same cell
         int[][] warriorPositions = getWarriorPositions();
-        for(WarriorTypeInterface warrior : warriors){
+        for(WarriorTypeInterface_24129429 warrior : warriors){
             for (int[] warriorPosition : warriorPositions) {
                 int xPos = warriorPosition[0];
                 int yPos = warriorPosition[1];
-                if (new Position(xPos, yPos).equals(warrior.getPosition())) {
+                if (new Position_24129429(xPos, yPos).equals(warrior.getPosition())) {
                     int warriorTypeCode = typeCode.valueOf("" + warrior.getType().charAt(0)).ordinal();
                     int numSameType = warriorPosition[3 + warriorTypeCode];
                     if (numSameType > 1) {
@@ -136,32 +135,38 @@ public class Game {
         }
 
 
-        //battle stage
-        ArrayList<WarriorTypeInterface> deadWarriors = new ArrayList<>();
-
-        for(WarriorTypeInterface warrior : warriors){
-            for(WarriorTypeInterface warrior2 : warriors){
+        //------------------battle stage------------------
+        for(WarriorTypeInterface_24129429 warrior : warriors){
+            for(WarriorTypeInterface_24129429 warrior2 : warriors){
                 if(warrior2.getPosition().isInNeighborhood(warrior.getPosition())){
                     if(warrior.getDefense() < warrior2.getDefense()){
                         warrior.adjustBufferHealth(-1*warrior2.getOffense());
-                        boolean alive = warrior.isAlive();
-                        if(!alive && !deadWarriors.contains(warrior)) deadWarriors.add(warrior);
                     }
                 }
             }
         }
-        for(WarriorTypeInterface warrior : deadWarriors){
+
+        //-------------remove dead warriors--------------
+        //this is done in two parts since you cannot remove an element from an arraylist while iterating through it
+        ArrayList<WarriorTypeInterface_24129429> deadWarriors = new ArrayList<>();
+
+        for(WarriorTypeInterface_24129429 warrior : warriors){
+            if(!warrior.isAlive()) deadWarriors.add(warrior);
+        }
+        for(WarriorTypeInterface_24129429 warrior: deadWarriors){
             warriors.remove(warrior);
             System.out.println("A warrior has left the game!");
         }
 
-        for(WarriorTypeInterface warrior : warriors){
+        //----------------------------------------------
+
+        for(WarriorTypeInterface_24129429 warrior : warriors){
             warrior.updateValues();
             warrior.move();
             warrior.incrementAge();
         }
         water.iterate();
-        validateNumberOfWarriors();
+        validateNumberOfWarriors(true);
 
         if(warriors.size() == 1){
             System.out.println("A warrior has been proven victor!");
@@ -171,28 +176,28 @@ public class Game {
     }
 
     private static void printStatistics() {
-        WarriorTypeInterface[] sortedWarriors = warriors.toArray(new WarriorTypeInterface[warriors.size()]);
+        WarriorTypeInterface_24129429[] sortedWarriors = warriors.toArray(new WarriorTypeInterface_24129429[warriors.size()]);
 
         for(int i = 0; i < sortedWarriors.length; i++){
             for(int j = i + 1; j < sortedWarriors.length; j++){
-                Position posI = sortedWarriors[i].getPosition();
-                Position posJ = sortedWarriors[j].getPosition();
+                Position_24129429 posI = sortedWarriors[i].getPosition();
+                Position_24129429 posJ = sortedWarriors[j].getPosition();
                 int relativePosI = posI.getY()*gridSize[1] + posI.getX();
                 int relativePosJ = posJ.getY()*gridSize[1] + posJ.getX();
                 if(relativePosJ < relativePosI){
-                    WarriorTypeInterface temp = sortedWarriors[i];
+                    WarriorTypeInterface_24129429 temp = sortedWarriors[i];
                     sortedWarriors[i] = sortedWarriors[j];
                     sortedWarriors[j] = temp;
                 }else if(relativePosI == relativePosJ){
                     if(sortedWarriors[j].getId() < sortedWarriors[i].getId()){
-                        WarriorTypeInterface temp = sortedWarriors[i];
+                        WarriorTypeInterface_24129429 temp = sortedWarriors[i];
                         sortedWarriors[i] = sortedWarriors[j];
                         sortedWarriors[j] = temp;
                     }
                 }
             }
         }
-        for(WarriorTypeInterface warrior : sortedWarriors){
+        for(WarriorTypeInterface_24129429 warrior : sortedWarriors){
             System.out.println(warrior);
         }
     }
@@ -224,7 +229,7 @@ public class Game {
         for(int y = 0; y < gridSize[1]; y++){
             for(int x = 0; x < gridSize[0]; x++){
                 if(board[x][y] != null) continue; //checks whether board position has been populated
-                if(water.isWaterAtPosition(new Position(x,y))){
+                if(water.isWaterAtPosition(new Position_24129429(x,y))){
                     board[x][y] = "w";
                 }else{
                     board[x][y] = ".";
@@ -246,20 +251,21 @@ public class Game {
         try {
             Scanner scFile = new Scanner(new File(filepath));
             Scanner scLine = new Scanner(scFile.nextLine()).useDelimiter(" ");
-            int rows = scLine.nextInt();
-            int columns = scLine.nextInt();
-            gridSize[0] = columns;
-            gridSize[1] = rows;
+
+            gridSize[1] = scLine.nextInt(); //rows
+            gridSize[0] = scLine.nextInt(); //columns
             iterations = scLine.nextInt();
 
-            water = new Water(null);
+            Position_24129429.setGridSize(gridSize);
+            water = new Water_24129429(gridSize);
 
+            //iterates through each line of the game setup file
             while (scFile.hasNextLine()) {
                 scLine = new Scanner(scFile.nextLine()).useDelimiter(": ");
                 String category = scLine.next();
                 int numEntries = scLine.nextInt();
+
                 if (category.equals("Warrior")) {
-                    //warriors = new Warrior[numEntries];
                     for (int i = 0; i < numEntries; i++) {
 
                         scLine = new Scanner(scFile.nextLine()).useDelimiter(" ");
@@ -275,20 +281,20 @@ public class Game {
                         int invSize = scLine.nextInt();
                         String moves = scLine.next();
 
-                        Warrior warrior;
+                        Warrior_24129429 warrior;
 
                         switch (type) {
                             case "Stone":
-                                warrior = new StoneWarrior(new Position(column, row), id, age, health, offense, defense, invSize, moves);
+                                warrior = new StoneWarrior_24129429(new Position_24129429(column, row), id, age, health, offense, defense, invSize, moves);
                                 break;
                             case "Water":
-                                warrior = new WaterWarrior(new Position(column, row), id, age, health, offense, defense, invSize, moves);
+                                warrior = new WaterWarrior_24129429(new Position_24129429(column, row), id, age, health, offense, defense, invSize, moves);
                                 break;
                             case "Flame":
-                                warrior = new FlameWarrior(new Position(column, row), id, age, health, offense, defense, invSize, moves);
+                                warrior = new FlameWarrior_24129429(new Position_24129429(column, row), id, age, health, offense, defense, invSize, moves);
                                 break;
                             case "Air":
-                                warrior = new AirWarrior(new Position(column, row), id, age, health, offense, defense, invSize, moves);
+                                warrior = new AirWarrior_24129429(new Position_24129429(column, row), id, age, health, offense, defense, invSize, moves);
                                 break;
                             default:
                                 //this code should never run and is for debugging purposes
@@ -298,18 +304,18 @@ public class Game {
                         }
 
                         //warriors[i] = warrior;
-                        warriors.add((WarriorTypeInterface) warrior);
+                        warriors.add((WarriorTypeInterface_24129429) warrior);
                     }
 
                 } else if (category.equals("Water")) {
-                    Position[] positions = new Position[numEntries];
+                    Position_24129429[] positions = new Position_24129429[numEntries];
                     for(int i = 0; i < numEntries; i++){
                         String[] posString = scFile.nextLine().split(" ");
                         int row = Integer.parseInt(posString[0]);
                         int column = Integer.parseInt(posString[1]);
-                        positions[i] = new Position(column, row);
+                        positions[i] = new Position_24129429(column, row);
                     }
-                    water = new Water(positions);
+                    water.populateGrid(positions);
                 }
             }
 
@@ -324,22 +330,23 @@ public class Game {
     //terminates program if a rule is broken
     public static void validateCells(){
         //Warriors
-        int[][] warriorPositions = getWarriorPositions();
-
-        for (int[] n : warriorPositions) {
-            if(n[2] > 10){
-                System.out.println("Error: more than 10 warrior pieces were configured at the same position on the game grid.");
-                System.exit(0);
-            }
-        }
+        validateNumberOfWarriors(false);
+        //Other pieces
     }
 
-    public static void validateNumberOfWarriors(){
+    //Determines whether there are more than 10 warriors at any one position.
+    //errorMessage should be false if the method is called before the game starts iterating
+    //as different error messages are printed depending on the game state
+    public static void validateNumberOfWarriors(boolean errorMessage){
         int[][] warriorPositions = getWarriorPositions();
 
         for (int[] n : warriorPositions) {
             if(n[2] > 10){
-                System.out.printf("Error: warrior limit exceeded at cell %s %s\n",n[1],n[0]);
+                if(errorMessage) {
+                    System.out.printf("Error: warrior limit exceeded at cell %s %s\n", n[1], n[0]);
+                }else{
+                    System.out.println("Error: more than 10 warrior pieces were configured at the same position on the game grid.");
+                }
                 System.exit(0);
             }
         }
@@ -349,18 +356,21 @@ public class Game {
 
     //returns a 2d array in the form
     //{{x-coordinate,y-coordinate, number of warriors, number of air, number of flame, number of stone, number of water},...}
+    //used to show how many warriors and what type of warriors are at each occupied position
     public static int[][] getWarriorPositions(){
         //parallel arrays that keep track of warrior positions and number of warriors at that position
-        Position[] positions = new Position[warriors.size()];
+        Position_24129429[] positions = new Position_24129429[warriors.size()];
         int[] positionCount = new int[warriors.size()];
+        //arrays that keep track of number of specific types of warriors at each position
         int[] airCount = new int[warriors.size()];
         int[] flameCount = new int[warriors.size()];
         int[] stoneCount = new int[warriors.size()];
         int[] waterCount = new int[warriors.size()];
         int numPositions = 0; //number of unique positions
 
-        for (WarriorTypeInterface warrior : warriors) {
-            Position currentPosition = warrior.getPosition();
+        //iterates through list of warriors and populates the above arrays
+        for (WarriorTypeInterface_24129429 warrior : warriors) {
+            Position_24129429 currentPosition = warrior.getPosition();
             boolean unique = true;
             int matchingIndex = -1;
             for (int p = 0; p < numPositions; p++) {
@@ -398,17 +408,5 @@ public class Game {
         return hybridArr;
 
     }
-
-    //loops through warriors and returns the first warrior it finds at Position p
-    //if no such warrior exists the method will return null
-    //OBSOLETE
-//    public static WarriorTypeInterface getFirstWarriorAtPosition(Position p){
-//        for(WarriorTypeInterface warrior : warriors){
-//            if(p.equals(warrior.getPosition())){
-//                return warrior;
-//            }
-//        }
-//        return null;
-//    }
 
 }

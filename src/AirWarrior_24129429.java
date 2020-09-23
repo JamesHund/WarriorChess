@@ -1,6 +1,6 @@
-public class AirWarrior extends Warrior implements WarriorTypeInterface {
+public class AirWarrior_24129429 extends Warrior_24129429 implements WarriorTypeInterface_24129429 {
 
-    public AirWarrior(Position position, int id, int age, double health, double offense, double defense, int invSize, String moves) {
+    public AirWarrior_24129429(Position_24129429 position, int id, int age, double health, double offense, double defense, int invSize, String moves) {
         super(position, id, age, health, offense, defense, "Air", 3, invSize, moves);
     }
 
@@ -20,7 +20,7 @@ public class AirWarrior extends Warrior implements WarriorTypeInterface {
 
     }
 
-    public void specialAbilityCompleted() {
+    private void specialAbilityCompleted() {
         adjustBufferOffense(-30);
     }
 

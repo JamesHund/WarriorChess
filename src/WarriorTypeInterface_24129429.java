@@ -1,13 +1,14 @@
-public interface WarriorTypeInterface {
+public interface WarriorTypeInterface_24129429 {
+
+    //Subtype specific methods
 
     void performSpecialAbility();
-    void specialAbilityCompleted();
 
-    Position getPosition();
+    //Warrior instance methods
+
+    Position_24129429 getPosition();
 
     int getId();
-
-    double getHealth();
 
     double getOffense();
 
@@ -37,17 +38,6 @@ public interface WarriorTypeInterface {
     
     void decrementSpecialAbilityCount();
 
-    public String toString();
-
-
-
-    //    void decrementWarriorInvisibility();
-    //
-    //    void setWarriorInvisibility(int val);
-    //
-    //    void setInTrance();
-    //
-    //    void setCuredFromTrance();
-
+    String toString();
 
 }
