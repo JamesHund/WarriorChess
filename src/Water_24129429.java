@@ -1,7 +1,7 @@
 public class Water_24129429 {
 
     private boolean[][] grid;
-    private int[] gridSize;
+    private final int[] gridSize;
 
     //constructor: initializes empty boolean grid with size gridSize
     //takes in a reference to a universal gridSize array
