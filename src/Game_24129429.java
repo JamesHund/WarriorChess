@@ -12,7 +12,7 @@ public class Game_24129429 {
     public static ArrayList<WarriorTypeInterface_24129429> warriors = new ArrayList<>();
     public static Water_24129429 water;
 
-    public enum typeCode{
+    public enum typeCode{ //used as a way to index different warrior types
         A, F, S, W
     }
 
@@ -32,9 +32,8 @@ public class Game_24129429 {
             return;
         }
 
-
         String path = args[0];
-        try {
+        try { //checks if first argument points to an actual file
             Scanner test = new Scanner(new File(path));
             test.close();
         } catch (FileNotFoundException e) {
@@ -42,47 +41,42 @@ public class Game_24129429 {
             return;
         }
 
-        parseSetupFile(path);
-        validateCells();
-        //System.out.println(gridSize[0] + " " + gridSize[1]);
-
         int outputVersion;
-        try {
+        try { //checking if second argument is an integer
             outputVersion = Integer.parseInt(args[1]);
         }catch (NumberFormatException e){
             System.out.println("Usage: < program name > < name of the game setup file > .txt");
             return;
         }
-        if (outputVersion == 0) {
-            // warrior statistics mode
+
+        //------------------------------
+
+        parseSetupFile(path);
+        validateCells();
+
+        if (outputVersion == 0) { // warrior statistics mode
             printStatistics();
             System.out.println();
+
             for(int i = 0; i < iterations; i++){
                 iterate();
                 printStatistics();
                 System.out.println();
             }
 
-        } else if (outputVersion == 1) {
-            // warrior statistics with visualization mode
+        } else if (outputVersion == 1) { // warrior statistics with visualization mode
             printVisualization();
             System.out.println();
+
             for(int i = 0; i < iterations; i++){
-                //System.out.printf("\nCurrent iteration: %o\n", currentIteration);
                 iterate();
                 printVisualization();
                 System.out.println();
             }
+
         } else {
             System.out.println("Usage: < program name > < name of the game setup file > .txt");
         }
-
-
-//        Position.setGridSize(5,5);
-//        Position p = new Position(0,0);
-//        for(Position neighbour : p.getNeighbors()) {
-//        	System.out.println(neighbour);
-//        }
     }
 
 
@@ -125,8 +119,8 @@ public class Game_24129429 {
                 int xPos = warriorPosition[0];
                 int yPos = warriorPosition[1];
                 if (new Position_24129429(xPos, yPos).equals(warrior.getPosition())) {
-                    int warriorTypeCode = typeCode.valueOf("" + warrior.getType().charAt(0)).ordinal();
-                    int numSameType = warriorPosition[3 + warriorTypeCode];
+                    int warriorIndex = typeCode.valueOf("" + warrior.getType().charAt(0)).ordinal(); //uses typeCode enum to get an index from 0 to 3
+                    int numSameType = warriorPosition[3 + warriorIndex];
                     if (numSameType > 1) {
                         warrior.adjustBufferDefense(MULTIPLE_WARRIORS_HEALTH_BUFF * (numSameType - 1));
                     }
@@ -153,6 +147,7 @@ public class Game_24129429 {
         for(WarriorTypeInterface_24129429 warrior : warriors){
             if(!warrior.isAlive()) deadWarriors.add(warrior);
         }
+
         for(WarriorTypeInterface_24129429 warrior: deadWarriors){
             warriors.remove(warrior);
             System.out.println("A warrior has left the game!");
@@ -176,7 +171,8 @@ public class Game_24129429 {
     }
 
     private static void printStatistics() {
-        WarriorTypeInterface_24129429[] sortedWarriors = warriors.toArray(new WarriorTypeInterface_24129429[warriors.size()]);
+        WarriorTypeInterface_24129429[] sortedWarriors = new WarriorTypeInterface_24129429[warriors.size()];
+        warriors.toArray(sortedWarriors);
 
         for(int i = 0; i < sortedWarriors.length; i++){
             for(int j = i + 1; j < sortedWarriors.length; j++){
@@ -261,7 +257,8 @@ public class Game_24129429 {
 
             //iterates through each line of the game setup file
             while (scFile.hasNextLine()) {
-                scLine = new Scanner(scFile.nextLine()).useDelimiter(": ");
+                String nextLine = scFile.nextLine();
+                scLine = new Scanner(nextLine).useDelimiter(": ");
                 String category = scLine.next();
                 int numEntries = scLine.nextInt();
 
@@ -401,6 +398,8 @@ public class Game_24129429 {
                     waterCount[matchingIndex]++;
             }
         }
+
+        //hybrid array which combines all the parallel arrays
         int[][] hybridArr = new int[numPositions][];
         for(int i = 0; i < numPositions; i++){
             hybridArr[i] = new int[]{positions[i].getX(),positions[i].getY(),positionCount[i], airCount[i],flameCount[i],stoneCount[i],waterCount[i]};

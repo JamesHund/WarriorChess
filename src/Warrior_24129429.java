@@ -26,8 +26,8 @@ public class Warrior_24129429 {
 	private boolean alive = true;
 
 	//special ability field
-	private final int specialAbilityTotalCount;
-	private int specialAbilityCount;
+	private final int specialAbilityTotalCount; //total iterations for which ability is performed
+	private int specialAbilityCount; //iterations of special ability to be performed
 	private boolean specialAbilityBeingPerformed = false;
 	private boolean specialAbilityPerformed = false;
 
@@ -132,6 +132,7 @@ public class Warrior_24129429 {
 		}
 	}
 
+	//updates values - to be called at the end of an iteration
 	public void updateValues() {
 		offense = bufferOffense;
 		defense = bufferDefense;
@@ -194,6 +195,7 @@ public class Warrior_24129429 {
 		specialAbilityPerformed = true;
 	}
 
+	//sets maximum defense based on the warrior's age
 	private void setMaxDefense(){
 		if(age >= AGE_STAGE_THREE){
 			maxDefense = MAX_DEFENSE_THREE;

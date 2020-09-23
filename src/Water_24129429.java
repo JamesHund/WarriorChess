@@ -21,9 +21,10 @@ public class Water_24129429 {
         }
     }
 
+    //changes positions of water objects according to water rules
     public void iterate(){
         boolean[][] newGrid = new boolean[gridSize[0]][gridSize[1]];
-        //do stuff according to water rules
+
         for(int y = 0; y < gridSize[1]; y++){
             for(int x = 0; x < gridSize[0]; x++){
                 int nearbyWaterCount = 0;
