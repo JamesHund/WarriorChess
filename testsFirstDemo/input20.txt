@@ -1,0 +1,9 @@
+6 6 3
+Warrior: 7
+0 0 1 Stone 3 80.5 20 60 2 ncq
+0 0 2 Stone 3 80.5 20 60 2 nn
+1 1 3 Stone 3 80.5 20 60 2 qnnn
+4 4 4 Water 3 80.5 20 60 2 nq
+4 4 5 Water 3 80.5 20 60 2 nw
+4 3 6 Water 3 80.5 20 60 2 dnn
+4 4 7 Water 3 80.5 20 60 2 nnn
