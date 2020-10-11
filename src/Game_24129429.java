@@ -264,17 +264,17 @@ public class Game_24129429 {
 
                 if (category.equals("Warrior")) {
                     for (int i = 0; i < numEntries; i++) {
-
-                        scLine = new Scanner(scFile.nextLine()).useDelimiter(" ");
+                        nextLine = scFile.nextLine();
+                        scLine = new Scanner(nextLine).useDelimiter(" ");
 
                         int row = scLine.nextInt();
                         int column = scLine.nextInt();
                         int id = scLine.nextInt();
                         String type = scLine.next();
                         int age = scLine.nextInt();
-                        double health = scLine.nextDouble();
-                        double offense = scLine.nextDouble();
-                        double defense = scLine.nextDouble();
+                        double health = Double.parseDouble(scLine.next());
+                        double offense = Double.parseDouble(scLine.next());
+                        double defense = Double.parseDouble(scLine.next());
                         int invSize = scLine.nextInt();
                         String moves = scLine.next();
 

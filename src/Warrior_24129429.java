@@ -1,3 +1,5 @@
+import java.util.Locale;
+
 public class Warrior_24129429 {
 	//constants
 	private static final int AGE_STAGE_ONE = 15;
@@ -210,6 +212,7 @@ public class Warrior_24129429 {
 
 	@Override
 	public String toString() {
-		return String.format("%s, %s, %.1f, %.1f, %.1f, %o, %s, %s, %s", id, age, health, offense, defense, numWeapons, type, position.getY(), position.getX());
+		//Locale set to english so that user locales dont affect output eg. (80.0 as opposed to 80,0)
+		return String.format(Locale.ENGLISH, "%s, %s, %.1f, %.1f, %.1f, %o, %s, %s, %s", id, age, health, offense, defense, numWeapons, type, position.getY(), position.getX());
 	}
 }

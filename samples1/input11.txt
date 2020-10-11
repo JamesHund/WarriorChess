@@ -1,0 +1,3 @@
+3 3 3
+Warrior: 1
+0 1 1 Stone 3 80.5 20 60 2 eeaaa

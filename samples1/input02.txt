@@ -1,0 +1,4 @@
+3 3 3
+Warrior: 2
+0 0 1 Stone 3 80.5 20 60 2 ddz
+2 2 2 Flame 3 80.5 20 60 2 n
