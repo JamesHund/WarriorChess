@@ -89,8 +89,11 @@ public class Game_24129429 {
         boolean crystalActivated = false;
         WarriorPosition_24129429[] warriorPositions = WarriorPosition_24129429.getWarriorPositions(warriors);
 
-        if(crystal != null){
-            //if(crystal.isAbilityActivated())
+
+        if(crystal != null && crystal.isAbilityActivated(warriorPositions)){
+            crystalActivated = true;
+            System.out.println("The Magic Crystal has been activated! Four warriors remain...");
+
         }
 
         //perform water related health buffs and health debuffs
