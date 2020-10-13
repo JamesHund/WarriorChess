@@ -26,6 +26,8 @@ public class FlameWarrior_24129429 extends Warrior_24129429 implements WarriorTy
     }
 
     private void specialAbilityCompleted() {
-        setBufferDefense(preSpecialDefense);
+        //set buffer defense to maximum of previous defence and 70
+        setBufferDefense(preSpecialDefense>70?preSpecialDefense:70);
     }
+
 }

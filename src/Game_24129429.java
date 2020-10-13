@@ -55,6 +55,7 @@ public class Game_24129429 {
         validateCells();
 
         if (outputVersion == 0) { // warrior statistics mode
+            evauluateRemainingWarriors();
             printStatistics();
             System.out.println();
 
@@ -66,11 +67,14 @@ public class Game_24129429 {
 
         } else if (outputVersion == 1) { // warrior statistics with visualization mode
             printVisualization();
+            evauluateRemainingWarriors();
+            printStatistics();
             System.out.println();
 
             for(int i = 0; i < iterations; i++){
                 iterate();
                 printVisualization();
+                printStatistics();
                 System.out.println();
             }
 
@@ -156,18 +160,14 @@ public class Game_24129429 {
         //----------------------------------------------
 
         for(WarriorTypeInterface_24129429 warrior : warriors){
+            warrior.incrementAge();
             warrior.updateValues();
             warrior.move();
-            warrior.incrementAge();
         }
         water.iterate();
         validateNumberOfWarriors(true);
 
-        if(warriors.size() == 1){
-            System.out.println("A warrior has been proven victor!");
-            System.exit(0);
-        }
-
+        evauluateRemainingWarriors();
     }
 
     private static void printStatistics() {
@@ -240,7 +240,6 @@ public class Game_24129429 {
             }
             System.out.println();
         }
-        printStatistics();
     }
 
     public static void parseSetupFile(String filepath) {
@@ -321,6 +320,17 @@ public class Game_24129429 {
             System.err.println("File not found, please input a valid filename");
         }
 
+    }
+
+    //checks if there is one or zero warriors remaining and terminates the game accordingly
+    public static void evauluateRemainingWarriors(){
+        if(warriors.size() == 1){
+            System.out.println("A warrior has been proven victor!");
+            System.exit(0);
+        }else if(warriors.size() == 0){
+            System.out.println("No warriors are left!");
+            System.exit(0);
+        }
     }
 
     //determines whether game setup file does not violate any game rules

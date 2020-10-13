@@ -180,8 +180,10 @@ public class Warrior_24129429 {
 
 	public void incrementAge() {
 		age++;
-		setMaxDefense();
-		adjustBufferDefense(0);
+		if(!(type.equals("Flame") && specialAbilityBeingPerformed)) {
+			setMaxDefense();
+			adjustBufferDefense(0);
+		}
 	}
 
 	public void decrementSpecialAbilityCount() {

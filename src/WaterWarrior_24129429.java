@@ -6,8 +6,11 @@ public class WaterWarrior_24129429 extends Warrior_24129429 implements WarriorTy
 
 
     public void performSpecialAbility() {
-        System.out.println("Special ability performed by water warrior!");
-        adjustBufferHealth(20);
+        if(getSpecialAbilityCount() != 0) {
+            System.out.println("Special ability performed by water warrior!");
+            adjustBufferHealth(20);
+        }
     }
+
 
 }
