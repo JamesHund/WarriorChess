@@ -1,0 +1,7 @@
+5 5 1
+Warrior: 2
+2 2 1 Stone 3 80.5 20 60 2 ncq
+0 0 2 Flame 3 80 20 60 2 n
+Restorer: 2
+2 1 2
+2 2 5

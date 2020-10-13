@@ -1,0 +1,14 @@
+4 4 1
+Warrior: 2
+0 0 1 Air 1 30.5 30 72 2 e
+1 1 2 Flame 1 85.5 30 72 2 e
+Peacemaker: 1
+0 0
+Restorer: 1
+0 1 10
+Weapon: 2
+0 0 3
+0 1 30
+Potion: 2
+0 0 0
+0 1 1
