@@ -11,11 +11,9 @@ public class Game_24129429 {
 
     public static ArrayList<WarriorTypeInterface_24129429> warriors = new ArrayList<>();
     public static Water_24129429 water;
+    public static Crystal_24129429 crystal;
 
-    public enum typeCode{ //used as a way to index different warrior types
-        A, F, S, W
-    }
-
+    public final static String[] typeIndex = new String[]{"Air", "Flame", "Stone", "Water"};
     //constants
     public static final double WATER_HEALTH_BUFF = 3;
     public static final double WATER_HEALTH_DEBUFF = -0.5;
@@ -88,6 +86,13 @@ public class Game_24129429 {
     public static void iterate(){
         currentIteration++;
 
+        boolean crystalActivated = false;
+        WarriorPosition_24129429[] warriorPositions = WarriorPosition_24129429.getWarriorPositions(warriors);
+
+        if(crystal != null){
+            //if(crystal.isAbilityActivated())
+        }
+
         //perform water related health buffs and health debuffs
         for(WarriorTypeInterface_24129429 warrior: warriors){
 
@@ -117,14 +122,10 @@ public class Game_24129429 {
         }
 
         //adjust defense based on warriors of same type in same cell
-        int[][] warriorPositions = getWarriorPositions();
         for(WarriorTypeInterface_24129429 warrior : warriors){
-            for (int[] warriorPosition : warriorPositions) {
-                int xPos = warriorPosition[0];
-                int yPos = warriorPosition[1];
-                if (new Position_24129429(xPos, yPos).equals(warrior.getPosition())) {
-                    int warriorIndex = typeCode.valueOf("" + warrior.getType().charAt(0)).ordinal(); //uses typeCode enum to get an index from 0 to 3
-                    int numSameType = warriorPosition[3 + warriorIndex];
+            for (WarriorPosition_24129429 warriorPosition : warriorPositions) {
+                if (warriorPosition.getPosition().equals(warrior.getPosition())) {
+                    int numSameType = warriorPosition.getNumType(warrior.getType());
                     if (numSameType > 1) {
                         warrior.adjustBufferDefense(MULTIPLE_WARRIORS_HEALTH_BUFF * (numSameType - 1));
                     }
@@ -203,22 +204,21 @@ public class Game_24129429 {
         String[][] board = new String[gridSize[0]][gridSize[1]];
 
         //populates board with warriors
-        for(int[] warriorPosition : getWarriorPositions()){
-            int xPos = warriorPosition[0];
-            int yPos = warriorPosition[1];
-            int numWarriors = warriorPosition[2];
+        for(WarriorPosition_24129429 warriorPosition : WarriorPosition_24129429.getWarriorPositions(warriors)){
+            Position_24129429 pos = warriorPosition.getPosition();
+            int numWarriors = warriorPosition.getNumWarriors();
 
             if(numWarriors > 1){
-                board[xPos][yPos] = "" + numWarriors;
+                board[pos.getX()][pos.getY()] = "" + numWarriors;
             }else{
-                String type = "";
-                for(int i = 3; i < 7; i++){
-                    if(warriorPosition[i] > 0){
-                        type = "" + typeCode.values()[i-3];
+                char typeChar = ' ';
+                for(String type : typeIndex){
+                    if(warriorPosition.getNumType(type) == 1){
+                        typeChar = type.charAt(0);
                     }
                 }
 
-                board[xPos][yPos] = "" + type.charAt(0);
+                board[pos.getX()][pos.getY()] = "" + typeChar;
             }
         }
         //everything else
@@ -256,62 +256,80 @@ public class Game_24129429 {
 
             //iterates through each line of the game setup file
             while (scFile.hasNextLine()) {
+
                 String nextLine = scFile.nextLine();
                 scLine = new Scanner(nextLine).useDelimiter(": ");
+
                 String category = scLine.next();
                 int numEntries = scLine.nextInt();
 
-                if (category.equals("Warrior")) {
-                    for (int i = 0; i < numEntries; i++) {
+                switch (category) {
+                    case "Warrior":
+                        for (int i = 0; i < numEntries; i++) {
+                            nextLine = scFile.nextLine();
+                            scLine = new Scanner(nextLine).useDelimiter(" ");
+
+                            int row = scLine.nextInt();
+                            int column = scLine.nextInt();
+                            int id = scLine.nextInt();
+                            String type = scLine.next();
+                            int age = scLine.nextInt();
+                            double health = Double.parseDouble(scLine.next());
+                            double offense = Double.parseDouble(scLine.next());
+                            double defense = Double.parseDouble(scLine.next());
+                            int invSize = scLine.nextInt();
+                            String moves = scLine.next();
+
+                            Warrior_24129429 warrior;
+
+                            switch (type) {
+                                case "Stone":
+                                    warrior = new StoneWarrior_24129429(new Position_24129429(column, row), id, age, health, offense, defense, invSize, moves);
+                                    break;
+                                case "Water":
+                                    warrior = new WaterWarrior_24129429(new Position_24129429(column, row), id, age, health, offense, defense, invSize, moves);
+                                    break;
+                                case "Flame":
+                                    warrior = new FlameWarrior_24129429(new Position_24129429(column, row), id, age, health, offense, defense, invSize, moves);
+                                    break;
+                                case "Air":
+                                    warrior = new AirWarrior_24129429(new Position_24129429(column, row), id, age, health, offense, defense, invSize, moves);
+                                    break;
+                                default:
+                                    //this code should never run and is for debugging purposes
+                                    System.err.printf("Warrior type: %s does not exist", type);
+                                    System.exit(0);
+                                    return;
+                            }
+
+                            //warriors[i] = warrior;
+                            warriors.add((WarriorTypeInterface_24129429) warrior);
+                        }
+
+                        break;
+                    case "Water":
+                        Position_24129429[] positions = new Position_24129429[numEntries];
+                        for (int i = 0; i < numEntries; i++) {
+                            String[] posString = scFile.nextLine().split(" ");
+                            int row = Integer.parseInt(posString[0]);
+                            int column = Integer.parseInt(posString[1]);
+                            positions[i] = new Position_24129429(column, row);
+                        }
+                        water.populateGrid(positions);
+                        break;
+                    case "Magic Crystal":
+                        if (numEntries != 1) {
+                            System.out.println("Error: multiple magic crystal pieces were configured at the same position on the game grid.");
+                            System.exit(0);
+                        }
                         nextLine = scFile.nextLine();
                         scLine = new Scanner(nextLine).useDelimiter(" ");
 
                         int row = scLine.nextInt();
                         int column = scLine.nextInt();
-                        int id = scLine.nextInt();
-                        String type = scLine.next();
-                        int age = scLine.nextInt();
-                        double health = Double.parseDouble(scLine.next());
-                        double offense = Double.parseDouble(scLine.next());
-                        double defense = Double.parseDouble(scLine.next());
-                        int invSize = scLine.nextInt();
-                        String moves = scLine.next();
 
-                        Warrior_24129429 warrior;
-
-                        switch (type) {
-                            case "Stone":
-                                warrior = new StoneWarrior_24129429(new Position_24129429(column, row), id, age, health, offense, defense, invSize, moves);
-                                break;
-                            case "Water":
-                                warrior = new WaterWarrior_24129429(new Position_24129429(column, row), id, age, health, offense, defense, invSize, moves);
-                                break;
-                            case "Flame":
-                                warrior = new FlameWarrior_24129429(new Position_24129429(column, row), id, age, health, offense, defense, invSize, moves);
-                                break;
-                            case "Air":
-                                warrior = new AirWarrior_24129429(new Position_24129429(column, row), id, age, health, offense, defense, invSize, moves);
-                                break;
-                            default:
-                                //this code should never run and is for debugging purposes
-                                System.err.printf("Warrior type: %s does not exist", type);
-                                System.exit(0);
-                                return;
-                        }
-
-                        //warriors[i] = warrior;
-                        warriors.add((WarriorTypeInterface_24129429) warrior);
-                    }
-
-                } else if (category.equals("Water")) {
-                    Position_24129429[] positions = new Position_24129429[numEntries];
-                    for(int i = 0; i < numEntries; i++){
-                        String[] posString = scFile.nextLine().split(" ");
-                        int row = Integer.parseInt(posString[0]);
-                        int column = Integer.parseInt(posString[1]);
-                        positions[i] = new Position_24129429(column, row);
-                    }
-                    water.populateGrid(positions);
+                        crystal = new Crystal_24129429(new Position_24129429(column, row));
+                        break;
                 }
             }
 
@@ -336,8 +354,10 @@ public class Game_24129429 {
     //determines whether game setup file does not violate any game rules
     //terminates program if a rule is broken
     public static void validateCells(){
+        String errorMessage = "Error: multiple %s pieces were configured at the same position on the game grid.";
         //Warriors
         validateNumberOfWarriors(false);
+        //Error: multiple < respective piece name > pieces were configured at the same position on the game grid.
         //Other pieces
     }
 
