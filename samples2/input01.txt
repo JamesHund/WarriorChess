@@ -1,6 +1,0 @@
-3 3 0
-Warrior: 4
-0 0 1 Stone 3 80.5 20 60 2 adqewx
-0 2 2 Flame 3 80 30 20 1 edax
-2 0 3 Air 3 80 30 20 1 n
-2 2 4 Water 3 80 30 20 1 xzdac

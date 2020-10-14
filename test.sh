@@ -11,7 +11,7 @@ do
 	echo $OUTPUT;
   fi
 done
-for i in {10..18}
+for i in {10..23}
 do
   echo -e "\nTesting test case $i\n";
   java Game_24129429 ../samples1/input$i.txt 1 | diff - ../samples1/outputVisualPlain/output$i.txt --color;

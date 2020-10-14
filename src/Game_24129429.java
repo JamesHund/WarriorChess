@@ -12,6 +12,7 @@ public class Game_24129429 {
     public static ArrayList<WarriorTypeInterface_24129429> warriors = new ArrayList<>();
     public static Water_24129429 water;
     public static Crystal_24129429 crystal;
+    public static Weapon_24129429[] weapons;
 
     public final static String[] typeIndex = new String[]{"Air", "Flame", "Stone", "Water"};
     //constants
@@ -93,6 +94,8 @@ public class Game_24129429 {
         if(crystal != null && crystal.isAbilityActivated(warriorPositions)){
             crystalActivated = true;
             System.out.println("The Magic Crystal has been activated! Four warriors remain...");
+            warriors = getWarriorsAtPositions(crystal.getCornerPositions());
+            crystal = null;
 
         }
 
@@ -136,18 +139,18 @@ public class Game_24129429 {
             }
         }
 
-
         //------------------battle stage------------------
-        for(WarriorTypeInterface_24129429 warrior : warriors){
-            for(WarriorTypeInterface_24129429 warrior2 : warriors){
-                if(warrior2.getPosition().isInNeighborhood(warrior.getPosition())){
-                    if(warrior.getDefense() < warrior2.getDefense()){
-                        warrior.adjustBufferHealth(-1*warrior2.getOffense());
+        if(!crystalActivated) {
+            for (WarriorTypeInterface_24129429 warrior : warriors) {
+                for (WarriorTypeInterface_24129429 warrior2 : warriors) {
+                    if (warrior2.getPosition().isInNeighborhood(warrior.getPosition())) {
+                        if (warrior.getDefense() < warrior2.getDefense()) {
+                            warrior.adjustBufferHealth(-1 * warrior2.getOffense());
+                        }
                     }
                 }
             }
         }
-
         //-------------remove dead warriors--------------
         //this is done in two parts since you cannot remove an element from an arraylist while iterating through it
         ArrayList<WarriorTypeInterface_24129429> deadWarriors = new ArrayList<>();
@@ -168,6 +171,11 @@ public class Game_24129429 {
             warrior.updateValues();
             warrior.move();
         }
+        //-------------------weapons--------------------
+        for(Weapon_24129429 weapon : weapons){
+
+        }
+
         water.iterate();
         validateNumberOfWarriors(true);
 
@@ -206,6 +214,35 @@ public class Game_24129429 {
     private static void printVisualization() {
         String[][] board = new String[gridSize[0]][gridSize[1]];
 
+        //populate board with empty cells
+        for(int y = 0; y < gridSize[1]; y++){
+            for(int x = 0; x < gridSize[0]; x++) {
+                board[x][y] = ".";
+            }
+        }
+        //weapons
+        if(weapons != null) {
+            for (Weapon_24129429 weapon : weapons) {
+                Position_24129429 pos = weapon.getPosition();
+                board[pos.getX()][pos.getY()] = "x";
+            }
+        }
+
+        //water
+        for(int y = 0; y < gridSize[1]; y++){
+            for(int x = 0; x < gridSize[0]; x++){
+                if(water.isWaterAtPosition(new Position_24129429(x,y))){
+                    board[x][y] = "w";
+                }
+            }
+        }
+
+        //magic crystal
+        if(crystal != null){
+            Position_24129429 pos = crystal.getPosition();
+            board[pos.getX()][pos.getY()] = "c";
+        }
+
         //populates board with warriors
         for(WarriorPosition_24129429 warriorPosition : WarriorPosition_24129429.getWarriorPositions(warriors)){
             Position_24129429 pos = warriorPosition.getPosition();
@@ -224,19 +261,8 @@ public class Game_24129429 {
                 board[pos.getX()][pos.getY()] = "" + typeChar;
             }
         }
-        //everything else
-        for(int y = 0; y < gridSize[1]; y++){
-            for(int x = 0; x < gridSize[0]; x++){
-                if(board[x][y] != null) continue; //checks whether board position has been populated
-                if(water.isWaterAtPosition(new Position_24129429(x,y))){
-                    board[x][y] = "w";
-                }else{
-                    board[x][y] = ".";
-                }
 
-            }
-        }
-
+        //print board
         for(int y = 0; y < gridSize[1]; y++) {
             for (int x = 0; x < gridSize[0]; x++) {
                 System.out.print(board[x][y] + " ");
@@ -277,6 +303,9 @@ public class Game_24129429 {
                             int id = scLine.nextInt();
                             String type = scLine.next();
                             int age = scLine.nextInt();
+
+                            //cant use scLine.nextDouble() because it doesn't work
+                            //with certain Locale settings unless running under Java 8
                             double health = Double.parseDouble(scLine.next());
                             double offense = Double.parseDouble(scLine.next());
                             double defense = Double.parseDouble(scLine.next());
@@ -322,16 +351,29 @@ public class Game_24129429 {
                         break;
                     case "Magic Crystal":
                         if (numEntries != 1) {
-                            System.out.println("Error: multiple magic crystal pieces were configured at the same position on the game grid.");
+                            System.out.println("Error: multiple magic crystal pieces configured on the grid.");
                             System.exit(0);
                         }
                         nextLine = scFile.nextLine();
                         scLine = new Scanner(nextLine).useDelimiter(" ");
 
-                        int row = scLine.nextInt();
-                        int column = scLine.nextInt();
-
-                        crystal = new Crystal_24129429(new Position_24129429(column, row));
+                        Position_24129429 pos;
+                        {
+                            int row = scLine.nextInt();
+                            int column = scLine.nextInt();
+                            pos = new Position_24129429(column,row);
+                        }
+                        crystal = new Crystal_24129429(pos);
+                        break;
+                    case "Weapon":
+                        weapons = new Weapon_24129429[numEntries];
+                        for(int i = 0; i < numEntries; i++){
+                            scLine = new Scanner(scFile.nextLine()).useDelimiter(" ");
+                            int row = scLine.nextInt();
+                            int column = scLine.nextInt();
+                            double offense = Double.parseDouble(scLine.next());
+                            weapons[i] = new Weapon_24129429(new Position_24129429(column,row),offense);
+                        }
                         break;
                 }
             }
@@ -368,12 +410,12 @@ public class Game_24129429 {
     //errorMessage should be false if the method is called before the game starts iterating
     //as different error messages are printed depending on the game state
     public static void validateNumberOfWarriors(boolean errorMessage){
-        int[][] warriorPositions = getWarriorPositions();
+        WarriorPosition_24129429[] warriorPositions = WarriorPosition_24129429.getWarriorPositions(warriors);
 
-        for (int[] n : warriorPositions) {
-            if(n[2] > 10){
+        for (WarriorPosition_24129429 pos : warriorPositions) {
+            if(pos.getNumWarriors() > 10){
                 if(errorMessage) {
-                    System.out.printf("Error: warrior limit exceeded at cell %s %s\n", n[1], n[0]);
+                    System.out.printf("Error: warrior limit exceeded at cell %s %s\n", pos.getPosition().getY(), pos.getPosition().getX());
                 }else{
                     System.out.println("Error: more than 10 warrior pieces were configured at the same position on the game grid.");
                 }
@@ -383,62 +425,20 @@ public class Game_24129429 {
     }
     //--------------USEFUL METHODS--------------------
 
-
-    //returns a 2d array in the form
-    //{{x-coordinate,y-coordinate, number of warriors, number of air, number of flame, number of stone, number of water},...}
-    //used to show how many warriors and what type of warriors are at each occupied position
-    public static int[][] getWarriorPositions(){
-        //parallel arrays that keep track of warrior positions and number of warriors at that position
-        Position_24129429[] positions = new Position_24129429[warriors.size()];
-        int[] positionCount = new int[warriors.size()];
-        //arrays that keep track of number of specific types of warriors at each position
-        int[] airCount = new int[warriors.size()];
-        int[] flameCount = new int[warriors.size()];
-        int[] stoneCount = new int[warriors.size()];
-        int[] waterCount = new int[warriors.size()];
-        int numPositions = 0; //number of unique positions
-
-        //iterates through list of warriors and populates the above arrays
-        for (WarriorTypeInterface_24129429 warrior : warriors) {
-            Position_24129429 currentPosition = warrior.getPosition();
-            boolean unique = true;
-            int matchingIndex = -1;
-            for (int p = 0; p < numPositions; p++) {
-                if (currentPosition.equals(positions[p])) {
-                    unique = false;
-                    matchingIndex = p;
-                    break;
+    //returns warriors that occupy any of the provided positions
+    //if multiple warriors exist at position it returns the warrior with lowest index in the warriors array
+    //intended to be used when it is known only a single warrior occupies said position
+    public static ArrayList<WarriorTypeInterface_24129429> getWarriorsAtPositions(Position_24129429[] positions){
+        ArrayList<WarriorTypeInterface_24129429> warriorsAtPositions = new ArrayList<>();
+        for(WarriorTypeInterface_24129429 warrior : warriors){
+            for(Position_24129429 position : positions){
+                if(warrior.getPosition().equals(position)){
+                    warriorsAtPositions.add(warrior);
                 }
             }
-
-            if (unique) {
-                positions[numPositions] = currentPosition;
-                matchingIndex = numPositions;
-                numPositions++;
-            }
-            positionCount[matchingIndex]++;
-            switch(warrior.getType()){
-                case "Air":
-                    airCount[matchingIndex]++;
-                    break;
-                case "Flame":
-                    flameCount[matchingIndex]++;
-                    break;
-                case "Stone":
-                    stoneCount[matchingIndex]++;
-                    break;
-                case "Water":
-                    waterCount[matchingIndex]++;
-            }
         }
-
-        //hybrid array which combines all the parallel arrays
-        int[][] hybridArr = new int[numPositions][];
-        for(int i = 0; i < numPositions; i++){
-            hybridArr[i] = new int[]{positions[i].getX(),positions[i].getY(),positionCount[i], airCount[i],flameCount[i],stoneCount[i],waterCount[i]};
-        }
-        return hybridArr;
-
+        return warriorsAtPositions;
     }
+
 
 }

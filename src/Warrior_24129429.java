@@ -17,11 +17,14 @@ public class Warrior_24129429 {
 	private static final double SPECIAL_ABILITY_THRESHOLD = 10;
 
 	//instance fields
-	private final int id, invSize;
+	private final int id, maxInvSize;
+
 	private int age;
 	private double health, offense, defense;
 	private Position_24129429 position;
 	private String type, moves;
+
+	private Weapon_24129429[] weapons;
 	private int numWeapons = 0;
 	private int moveIndex = 0;
 	private double maxDefense = MAX_DEFENSE_ZERO;
@@ -38,7 +41,7 @@ public class Warrior_24129429 {
 
 
 
-	public Warrior_24129429(Position_24129429 position, int id, int age, double health, double offense, double defense, String type, int specialAbilityTotalCount, int invSize, String moves) {
+	public Warrior_24129429(Position_24129429 position, int id, int age, double health, double offense, double defense, String type, int specialAbilityTotalCount, int maxInvSize, String moves) {
 		this.position = position;
 		this.id = id;
 		this.age = age;
@@ -47,12 +50,14 @@ public class Warrior_24129429 {
 		this.defense = defense;
 		this.type = type;
 		this.specialAbilityTotalCount = specialAbilityTotalCount;
-		this.invSize = invSize;
+		this.maxInvSize = maxInvSize;
 		this.moves = moves;
 
 		bufferHealth = this.health;
 		bufferDefense = this.defense;
 		bufferOffense = this.offense;
+
+		weapons = new Weapon_24129429[maxInvSize];
 
 		specialAbilityCount = specialAbilityTotalCount;
 	}
@@ -77,6 +82,17 @@ public class Warrior_24129429 {
 	public boolean isAlive() { return alive; }
 
 	//----------------MODIFIERS---------------------
+
+	//attempt to add weapon to player inventory
+	//if inventory is full return false
+	public boolean pickupWeapon(Weapon_24129429 weapon){
+		if(numWeapons < maxInvSize){
+			weapons[numWeapons] = weapon;
+			numWeapons++;
+			return true;
+		}
+		return false;
+	}
 
 	//returns whether they are alive or not
 	public void adjustBufferHealth(double value){

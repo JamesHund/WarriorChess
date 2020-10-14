@@ -16,6 +16,10 @@ public class Crystal_24129429 {
         }
     }
 
+    public Position_24129429 getPosition() {
+        return pos;
+    }
+
     public Position_24129429[] getCornerPositions(){
         return cornerPositions;
     }
@@ -34,7 +38,7 @@ public class Crystal_24129429 {
                     if(warriorPos.getNumWarriors() != 1){
                         return false;
                     }else{
-                        for(int j = 0; i < types.length; j++){
+                        for(int j = 0; j < types.length; j++){
                             if(warriorPos.getNumType(types[j]) == 1) warriorTypesPresent[j] = true;
                         }
                     }
