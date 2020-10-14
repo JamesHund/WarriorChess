@@ -14,12 +14,14 @@ public class Game_24129429 {
     public static Crystal_24129429 crystal;
     public static Weapon_24129429[] weapons;
 
+    public static WarriorPosition_24129429[] warriorPositions;
+
     public final static String[] typeIndex = new String[]{"Air", "Flame", "Stone", "Water"};
     //constants
     public static final double WATER_HEALTH_BUFF = 3;
     public static final double WATER_HEALTH_DEBUFF = -0.5;
     public static final double MULTIPLE_WARRIORS_HEALTH_BUFF = 2;
-    private static final double WATER_WARRIOR_OFFENSE_BUFF = 1;
+    public static final double WATER_WARRIOR_OFFENSE_BUFF = 1;
 
 
 
@@ -88,7 +90,6 @@ public class Game_24129429 {
         currentIteration++;
 
         boolean crystalActivated = false;
-        WarriorPosition_24129429[] warriorPositions = WarriorPosition_24129429.getWarriorPositions(warriors);
 
 
         if(crystal != null && crystal.isAbilityActivated(warriorPositions)){
@@ -171,9 +172,35 @@ public class Game_24129429 {
             warrior.updateValues();
             warrior.move();
         }
-        //-------------------weapons--------------------
-        for(Weapon_24129429 weapon : weapons){
 
+
+        //NB - update warrior positions
+        warriorPositions = WarriorPosition_24129429.getWarriorPositions(warriors);
+
+        //-------------------weapons--------------------
+
+        ArrayList<Weapon_24129429> weaponsForRemoval = new ArrayList<>();
+        if(weapons != null) {
+            for (Weapon_24129429 weapon : weapons) {
+                ArrayList<WarriorTypeInterface_24129429> tempWarriors = getWarriorsAtPositions(new Position_24129429[]{weapon.getPosition()});
+
+                if(tempWarriors.size() != 0) {
+                    WarriorTypeInterface_24129429 warriorToPickup = tempWarriors.get(0);
+                    boolean pickedUp = false;
+                    for (WarriorTypeInterface_24129429 warrior : tempWarriors) {
+                        if(warrior.canPickupWeapon()) {
+                            if (warriorToPickup.getOffense() < warrior.getOffense()) {
+                                warriorToPickup = warrior;
+                                pickedUp = true;
+                            }else if(warriorToPickup.getOffense() == warrior.getOffense() && warrior.getId() < warriorToPickup.getId()){
+                                warriorToPickup = warrior;
+                                pickedUp = true;
+                            }
+                        }
+                    }
+                    if(pickedUp) warriorToPickup.pickupWeapon(weapon);
+                }
+            }
         }
 
         water.iterate();
@@ -244,7 +271,7 @@ public class Game_24129429 {
         }
 
         //populates board with warriors
-        for(WarriorPosition_24129429 warriorPosition : WarriorPosition_24129429.getWarriorPositions(warriors)){
+        for(WarriorPosition_24129429 warriorPosition : warriorPositions){
             Position_24129429 pos = warriorPosition.getPosition();
             int numWarriors = warriorPosition.getNumWarriors();
 
@@ -338,6 +365,9 @@ public class Game_24129429 {
                             warriors.add((WarriorTypeInterface_24129429) warrior);
                         }
 
+                        //IMPORTANT
+                        warriorPositions = WarriorPosition_24129429.getWarriorPositions(warriors);
+
                         break;
                     case "Water":
                         Position_24129429[] positions = new Position_24129429[numEntries];
@@ -410,7 +440,6 @@ public class Game_24129429 {
     //errorMessage should be false if the method is called before the game starts iterating
     //as different error messages are printed depending on the game state
     public static void validateNumberOfWarriors(boolean errorMessage){
-        WarriorPosition_24129429[] warriorPositions = WarriorPosition_24129429.getWarriorPositions(warriors);
 
         for (WarriorPosition_24129429 pos : warriorPositions) {
             if(pos.getNumWarriors() > 10){
@@ -430,10 +459,10 @@ public class Game_24129429 {
     //intended to be used when it is known only a single warrior occupies said position
     public static ArrayList<WarriorTypeInterface_24129429> getWarriorsAtPositions(Position_24129429[] positions){
         ArrayList<WarriorTypeInterface_24129429> warriorsAtPositions = new ArrayList<>();
-        for(WarriorTypeInterface_24129429 warrior : warriors){
+        for(WarriorPosition_24129429 warriorPos : warriorPositions){
             for(Position_24129429 position : positions){
-                if(warrior.getPosition().equals(position)){
-                    warriorsAtPositions.add(warrior);
+                if(warriorPos.getPosition().equals(position)){
+                    warriorsAtPositions.addAll(warriorPos.getWarriors());
                 }
             }
         }

@@ -39,8 +39,6 @@ public class Warrior_24129429 {
 	//buffer fields
 	private double bufferHealth, bufferOffense, bufferDefense;
 
-
-
 	public Warrior_24129429(Position_24129429 position, int id, int age, double health, double offense, double defense, String type, int specialAbilityTotalCount, int maxInvSize, String moves) {
 		this.position = position;
 		this.id = id;
@@ -81,17 +79,17 @@ public class Warrior_24129429 {
 
 	public boolean isAlive() { return alive; }
 
+	public boolean canPickupWeapon() { return numWeapons < maxInvSize; }
+
 	//----------------MODIFIERS---------------------
 
 	//attempt to add weapon to player inventory
 	//if inventory is full return false
-	public boolean pickupWeapon(Weapon_24129429 weapon){
-		if(numWeapons < maxInvSize){
+	public void pickupWeapon(Weapon_24129429 weapon){
+		if(canPickupWeapon()){
 			weapons[numWeapons] = weapon;
 			numWeapons++;
-			return true;
 		}
-		return false;
 	}
 
 	//returns whether they are alive or not

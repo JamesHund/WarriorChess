@@ -24,6 +24,10 @@ public interface WarriorTypeInterface_24129429 {
 
     boolean isAlive();
 
+    boolean canPickupWeapon();
+
+    void pickupWeapon(Weapon_24129429 weapon);
+
     void adjustBufferHealth(double value);
 
     void adjustBufferOffense(double value);
