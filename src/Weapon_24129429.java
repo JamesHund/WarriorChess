@@ -15,4 +15,8 @@ public class Weapon_24129429 {
     public double getOffense() {
         return offense;
     }
+
+    public void setPosition(Position_24129429 pos){
+        this.pos = pos;
+    }
 }

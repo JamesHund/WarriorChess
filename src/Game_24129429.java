@@ -12,7 +12,7 @@ public class Game_24129429 {
     public static ArrayList<WarriorTypeInterface_24129429> warriors = new ArrayList<>();
     public static Water_24129429 water;
     public static Crystal_24129429 crystal;
-    public static Weapon_24129429[] weapons;
+    public static ArrayList<Weapon_24129429> weapons = new ArrayList<>();
 
     public static WarriorPosition_24129429[] warriorPositions;
 
@@ -180,28 +180,35 @@ public class Game_24129429 {
         //-------------------weapons--------------------
 
         ArrayList<Weapon_24129429> weaponsForRemoval = new ArrayList<>();
+        ArrayList<Weapon_24129429> weaponsForAddition = new ArrayList<>();
         if(weapons != null) {
             for (Weapon_24129429 weapon : weapons) {
                 ArrayList<WarriorTypeInterface_24129429> tempWarriors = getWarriorsAtPositions(new Position_24129429[]{weapon.getPosition()});
 
                 if(tempWarriors.size() != 0) {
                     WarriorTypeInterface_24129429 warriorToPickup = tempWarriors.get(0);
-                    boolean pickedUp = false;
                     for (WarriorTypeInterface_24129429 warrior : tempWarriors) {
-                        if(warrior.canPickupWeapon()) {
                             if (warriorToPickup.getOffense() < warrior.getOffense()) {
                                 warriorToPickup = warrior;
-                                pickedUp = true;
                             }else if(warriorToPickup.getOffense() == warrior.getOffense() && warrior.getId() < warriorToPickup.getId()){
                                 warriorToPickup = warrior;
-                                pickedUp = true;
                             }
-                        }
                     }
-                    if(pickedUp) warriorToPickup.pickupWeapon(weapon);
+                    Weapon_24129429 weaponToBeDropped = warriorToPickup.pickupWeapon(weapon);
+                    weaponsForRemoval.add(weapon);
+
+                    if(weaponToBeDropped != null){
+                        weaponsForAddition.add(weaponToBeDropped);
+                        weaponToBeDropped.setPosition(weapon.getPosition());
+                    }
                 }
             }
         }
+
+        weapons.removeAll(weaponsForRemoval);
+        weapons.addAll(weaponsForAddition);
+
+        //--------------------------------------------
 
         water.iterate();
         validateNumberOfWarriors(true);
@@ -396,13 +403,12 @@ public class Game_24129429 {
                         crystal = new Crystal_24129429(pos);
                         break;
                     case "Weapon":
-                        weapons = new Weapon_24129429[numEntries];
                         for(int i = 0; i < numEntries; i++){
                             scLine = new Scanner(scFile.nextLine()).useDelimiter(" ");
                             int row = scLine.nextInt();
                             int column = scLine.nextInt();
                             double offense = Double.parseDouble(scLine.next());
-                            weapons[i] = new Weapon_24129429(new Position_24129429(column,row),offense);
+                            weapons.add(new Weapon_24129429(new Position_24129429(column,row),offense));
                         }
                         break;
                 }
