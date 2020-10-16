@@ -1,12 +1,11 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 //utility class
 //stores the number of different types of warriors at a certain position
 public class WarriorPosition_24129429 {
-    private Position_24129429 position;
+    private final Position_24129429 position;
     private int numAir, numFlame, numStone, numWater;
-    private ArrayList<WarriorTypeInterface_24129429> warriors = new ArrayList<>(); //array containing pointers to warriors occupying positions
+    private final ArrayList<WarriorTypeInterface_24129429> warriors = new ArrayList<>(); //array containing pointers to warriors occupying positions
 
     public WarriorPosition_24129429(Position_24129429 position) {
         this.position = position;

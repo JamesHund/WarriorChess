@@ -1,7 +1,7 @@
 public class Weapon_24129429 {
 
     private Position_24129429 pos;
-    private double offense;
+    private final double offense;
 
     public Weapon_24129429(Position_24129429 pos, double offense) {
         this.pos = pos;

@@ -56,7 +56,7 @@ public class Game_24129429 {
         validateCells();
 
         if (outputVersion == 0) { // warrior statistics mode
-            evauluateRemainingWarriors();
+            //evaluateRemainingWarriors();
             printStatistics();
             System.out.println();
 
@@ -68,7 +68,7 @@ public class Game_24129429 {
 
         } else if (outputVersion == 1) { // warrior statistics with visualization mode
             printVisualization();
-            evauluateRemainingWarriors();
+            //evaluateRemainingWarriors();
             printStatistics();
             System.out.println();
 
@@ -213,7 +213,7 @@ public class Game_24129429 {
         water.iterate();
         validateNumberOfWarriors(true);
 
-        evauluateRemainingWarriors();
+        evaluateRemainingWarriors();
     }
 
     private static void printStatistics() {
@@ -422,7 +422,7 @@ public class Game_24129429 {
     }
 
     //checks if there is one or zero warriors remaining and terminates the game accordingly
-    public static void evauluateRemainingWarriors(){
+    public static void evaluateRemainingWarriors(){
         if(warriors.size() == 1){
             System.out.println("A warrior has been proven victor!");
             System.exit(0);

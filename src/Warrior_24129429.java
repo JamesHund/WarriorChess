@@ -24,7 +24,7 @@ public class Warrior_24129429 {
 	private Position_24129429 position;
 	private final String type, moves;
 
-	private Weapon_24129429[] weapons;
+	private final Weapon_24129429[] weapons;
 	private int weaponCounter = 0;
 	private int moveIndex = 0;
 	private double maxDefense = MAX_DEFENSE_ZERO;
@@ -58,6 +58,10 @@ public class Warrior_24129429 {
 		weapons = new Weapon_24129429[maxInvSize];
 
 		specialAbilityCount = specialAbilityTotalCount;
+
+		if(bufferHealth <= SPECIAL_ABILITY_THRESHOLD && !specialAbilityPerformed) {
+			queueSpecialAbility();
+		}
 	}
 
 	//----------------ACCESSORS---------------------
@@ -66,8 +70,7 @@ public class Warrior_24129429 {
 	public int getId() { return id; }
 
 	public double getOffense() {
-		double totalOffense = Math.min(100, offense + getTotalWeaponOffense());
-		return totalOffense;
+		return Math.min(100, offense + getTotalWeaponOffense());
 	}
 
 	public double getDefense() { return defense; }
@@ -230,12 +233,7 @@ public class Warrior_24129429 {
 	}
 
 	private double getTotalWeaponOffense(){
-		int max;
-		if(weaponCounter >= maxInvSize){
-			max = maxInvSize;
-		}else{
-			max = weaponCounter;
-		}
+		int max = Math.min(weaponCounter, maxInvSize);
 
 		int totalWeaponOffense = 0;
 		for(int i = 0; i < max; i++){
@@ -247,6 +245,6 @@ public class Warrior_24129429 {
 	@Override
 	public String toString() {
 		//Locale set to english so that user locales dont affect output eg. (80.0 as opposed to 80,0)
-		return String.format(Locale.ENGLISH, "%s, %s, %.1f, %.1f, %.1f, %o, %s, %s, %s", id, age, health, getOffense(), defense, Math.min(weaponCounter, maxInvSize), type, position.getY(), position.getX());
+		return String.format(Locale.ENGLISH, "%s, %s, %s, %s, %s, %s, %s, %s, %s", id, age, health, getOffense(), defense, Math.min(weaponCounter, maxInvSize), type, position.getY(), position.getX());
 	}
 }

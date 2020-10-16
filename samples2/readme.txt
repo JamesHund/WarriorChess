@@ -28,14 +28,14 @@ Here is a breakdown of what the test cases test:
 
 
 Additional test cases for final handin
-26	pick up of weapons during game
-27	pick up and drop of weapons FIFO
+* 26	pick up of weapons during game 
+* 27	pick up and drop of weapons FIFO
 28	magic crystal with correct configuration
-29	warrior with highest offense gets weapon
+* 29	warrior with highest offense gets weapon
 // Note that the following test cases should trigger a System.exit() and therefore cannot be tested by TestProject.java (You should check these by hand).
 30	magic crystal with incorrect configuration1
 31	output for no warriors left on grid
-32	complex grid run till end
+* 32	complex grid run till end
 33	Exception more than 1 magic crystal on grid
 
 
