@@ -1,0 +1,12 @@
+[1;90m. [0m[1;90m. [0m[1;90m. [0m[1;90m. [0m
+[1;90m. [0m[1;36mA [0m[1;90m. [0m[1;90m. [0m
+[1;90m. [0m[1;90m. [0m[1;36mA [0m[1;90m. [0m
+[1;90m. [0m[1;90m. [0m[1;90m. [0m[1;90m. [0m
+1, 1, 0.5, 30.0, 72.0, 0, Air, 1, 1
+2, 1, 0.5, 30.0, 72.0, 0, Air, 2, 2
+
+Special ability performed by air warrior!
+A warrior has left the game!
+Special ability performed by air warrior!
+A warrior has left the game!
+No warriors are left!

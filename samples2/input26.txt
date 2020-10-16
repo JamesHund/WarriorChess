@@ -1,0 +1,6 @@
+5 5 2
+Warrior: 2
+1 2 1 Water 3 80 20 60 2 xxx
+4 4 2 Stone 3 80 20 60 2 n
+Weapon: 1
+2 2 3
