@@ -1,11 +1,2 @@
-5 5 2
-Warrior: 7
-2 1 1 Water 3 80 0 60 2 n
-2 3 2 Stone 3 80 0 60 2 nn
-4 2 3 Flame 3 80 0 60 2 w
-1 2 4 Air 3 80 0 60 2 n
-0 0 5 Flame 3 80 0 60 2 n
-4 4 6 Water 3 80 0 60 2 n
-0 4 7 Air 3 80 0 60 2 n
-Magic Crystal: 1
-2 2
+3 3 3
+Warrior: 0

@@ -1,7 +1,5 @@
-4 4 1
-Warrior: 2
-2 1 1 Water 2 40 20 30 2 w
-1 0 2 Flame 3 80 20 1 1 n
-Magic Crystal: 2
-1 1
-1 2
+5 5 1
+Warrior: 3
+2 2 1 Stone 3 80.5 20 60 2 ncq
+0 0 2 Flame 3 0 20 60 2 n
+4 4 3 Flame 3 75.345 20 60 2 n
