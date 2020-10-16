@@ -47,7 +47,6 @@ Special ability performed by flame warrior!
 4, 47, 89.0, 30.0, 20.0, 0, Water, 1, 9
 2, 16, 3.4400000000000004, 30.0, 100.0, 0, Flame, 9, 4
 
-in special ability completed
 . . S . . . . . . . 
 . . w . . . . . . W 
 . x w . . . . . . . 

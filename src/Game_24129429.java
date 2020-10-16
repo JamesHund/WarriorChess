@@ -179,34 +179,7 @@ public class Game_24129429 {
 
         //-------------------weapons--------------------
 
-        ArrayList<Weapon_24129429> weaponsForRemoval = new ArrayList<>();
-        ArrayList<Weapon_24129429> weaponsForAddition = new ArrayList<>();
-        if(weapons != null) {
-            for (Weapon_24129429 weapon : weapons) {
-                ArrayList<WarriorTypeInterface_24129429> tempWarriors = getWarriorsAtPositions(new Position_24129429[]{weapon.getPosition()});
-
-                if(tempWarriors.size() != 0) {
-                    WarriorTypeInterface_24129429 warriorToPickup = tempWarriors.get(0);
-                    for (WarriorTypeInterface_24129429 warrior : tempWarriors) {
-                            if (warriorToPickup.getOffense() < warrior.getOffense()) {
-                                warriorToPickup = warrior;
-                            }else if(warriorToPickup.getOffense() == warrior.getOffense() && warrior.getId() < warriorToPickup.getId()){
-                                warriorToPickup = warrior;
-                            }
-                    }
-                    Weapon_24129429 weaponToBeDropped = warriorToPickup.pickupWeapon(weapon);
-                    weaponsForRemoval.add(weapon);
-
-                    if(weaponToBeDropped != null){
-                        weaponsForAddition.add(weaponToBeDropped);
-                        weaponToBeDropped.setPosition(weapon.getPosition());
-                    }
-                }
-            }
-        }
-
-        weapons.removeAll(weaponsForRemoval);
-        weapons.addAll(weaponsForAddition);
+        performWeaponPickup();
 
         //--------------------------------------------
 
@@ -303,6 +276,37 @@ public class Game_24129429 {
             }
             System.out.println();
         }
+    }
+
+    public static void performWeaponPickup(){
+        ArrayList<Weapon_24129429> weaponsForRemoval = new ArrayList<>();
+        ArrayList<Weapon_24129429> weaponsForAddition = new ArrayList<>();
+        if(weapons != null) {
+            for (Weapon_24129429 weapon : weapons) {
+                ArrayList<WarriorTypeInterface_24129429> tempWarriors = getWarriorsAtPositions(new Position_24129429[]{weapon.getPosition()});
+
+                if(tempWarriors.size() != 0) {
+                    WarriorTypeInterface_24129429 warriorToPickup = tempWarriors.get(0);
+                    for (WarriorTypeInterface_24129429 warrior : tempWarriors) {
+                        if (warriorToPickup.getOffense() < warrior.getOffense()) {
+                            warriorToPickup = warrior;
+                        }else if(warriorToPickup.getOffense() == warrior.getOffense() && warrior.getId() < warriorToPickup.getId()){
+                            warriorToPickup = warrior;
+                        }
+                    }
+                    Weapon_24129429 weaponToBeDropped = warriorToPickup.pickupWeapon(weapon);
+                    weaponsForRemoval.add(weapon);
+
+                    if(weaponToBeDropped != null){
+                        weaponsForAddition.add(weaponToBeDropped);
+                        weaponToBeDropped.setPosition(weapon.getPosition());
+                    }
+                }
+            }
+        }
+
+        weapons.removeAll(weaponsForRemoval);
+        weapons.addAll(weaponsForAddition);
     }
 
     public static void parseSetupFile(String filepath) {
@@ -410,6 +414,7 @@ public class Game_24129429 {
                             double offense = Double.parseDouble(scLine.next());
                             weapons.add(new Weapon_24129429(new Position_24129429(column,row),offense));
                         }
+                        performWeaponPickup();
                         break;
                 }
             }

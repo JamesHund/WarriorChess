@@ -38,6 +38,7 @@ public class Warrior_24129429 {
 
 	//buffer fields
 	private double bufferHealth, bufferOffense, bufferDefense;
+	private int bufferWeaponCounter;
 
 	public Warrior_24129429(Position_24129429 position, int id, int age, double health, double offense, double defense, String type, int specialAbilityTotalCount, int maxInvSize, String moves) {
 		this.position = position;
@@ -54,6 +55,7 @@ public class Warrior_24129429 {
 		bufferHealth = this.health;
 		bufferDefense = this.defense;
 		bufferOffense = this.offense;
+		bufferWeaponCounter = this.weaponCounter;
 
 		weapons = new Weapon_24129429[maxInvSize];
 
@@ -70,7 +72,7 @@ public class Warrior_24129429 {
 	public int getId() { return id; }
 
 	public double getOffense() {
-		return Math.min(100, offense + getTotalWeaponOffense());
+		return offense;
 	}
 
 	public double getDefense() { return defense; }
@@ -85,6 +87,8 @@ public class Warrior_24129429 {
 
 	public boolean isAlive() { return alive; }
 
+	public int getNumWeapons() { return Math.min(weaponCounter, maxInvSize);}
+
 	//----------------MODIFIERS---------------------
 
 	//add weapon to player inventory
@@ -93,8 +97,12 @@ public class Warrior_24129429 {
 	public Weapon_24129429 pickupWeapon(Weapon_24129429 weapon){
 		Weapon_24129429 weaponToBeDropped = weapons[weaponCounter%maxInvSize];
 		weapons[weaponCounter%maxInvSize] = weapon;
-		weaponCounter++;
-		if(weaponCounter>maxInvSize) return weaponToBeDropped;
+		bufferWeaponCounter++;
+		adjustBufferOffense(weapon.getOffense());
+		if(bufferWeaponCounter>maxInvSize){
+			adjustBufferOffense(-weaponToBeDropped.getOffense());
+			return weaponToBeDropped;
+		}
 		return null;
 	}
 
@@ -159,6 +167,7 @@ public class Warrior_24129429 {
 		offense = bufferOffense;
 		defense = bufferDefense;
 		health = bufferHealth;
+		weaponCounter = bufferWeaponCounter;
 	}
 
 	public void move(){
@@ -245,6 +254,6 @@ public class Warrior_24129429 {
 	@Override
 	public String toString() {
 		//Locale set to english so that user locales dont affect output eg. (80.0 as opposed to 80,0)
-		return String.format(Locale.ENGLISH, "%s, %s, %s, %s, %s, %s, %s, %s, %s", id, age, health, getOffense(), defense, Math.min(weaponCounter, maxInvSize), type, position.getY(), position.getX());
+		return String.format(Locale.ENGLISH, "%s, %s, %s, %s, %s, %s, %s, %s, %s", id, age, health, offense, defense, getNumWeapons(), type, position.getY(), position.getX());
 	}
 }
