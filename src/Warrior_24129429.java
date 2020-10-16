@@ -209,7 +209,7 @@ public class Warrior_24129429 {
 
 	public void incrementAge() {
 		age++;
-		if(!(type.equals("Flame") && specialAbilityBeingPerformed)) {
+		if(!((type.equals("Flame")||(type.equals("Stone"))) && specialAbilityBeingPerformed)) {
 			setMaxDefense();
 			adjustBufferDefense(0);
 		}
@@ -230,11 +230,11 @@ public class Warrior_24129429 {
 
 	//sets maximum defense based on the warrior's age
 	private void setMaxDefense(){
-		if(age >= AGE_STAGE_THREE){
+		if(age > AGE_STAGE_THREE){
 			maxDefense = MAX_DEFENSE_THREE;
-		}else if(age >= AGE_STAGE_TWO){
+		}else if(age > AGE_STAGE_TWO){
 			maxDefense = MAX_DEFENSE_TWO;
-		}else if(age >= AGE_STAGE_ONE){
+		}else if(age > AGE_STAGE_ONE){
 			maxDefense = MAX_DEFENSE_ONE;
 		}else{
 			maxDefense = MAX_DEFENSE_ZERO;
