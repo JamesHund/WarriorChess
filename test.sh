@@ -9,7 +9,7 @@ do
   then
   	echo -e "\nTesting test case $i\n";
 	java Game_24129429 "../samples2/input0$i.txt" "1" | diff - ../samples2/outputVisual/plain/output0$i.txt --color;
-	FAILED_CASES +=" " + $i + " ";
+	FAILED_CASES+=" "$i" ";
   fi
 done
 for i in {10..33}
@@ -23,4 +23,9 @@ do
     FAILED_CASES+=" "$i" ";
   fi
 done
-echo $FAILED_CASES
+if [ "$FAILED_CASES" == "Failed Cases: " ]
+then
+  echo All tests passed.
+else
+  echo $FAILED_CASES
+fi

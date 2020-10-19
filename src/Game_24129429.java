@@ -39,6 +39,7 @@ public class Game_24129429 {
         }
 
         String path = args[0];
+
         try { //checks if first argument points to an actual file
             Scanner test = new Scanner(new File(path));
             test.close();
@@ -160,7 +161,7 @@ public class Game_24129429 {
             for (WarriorTypeInterface_24129429 warrior : warriors) {
                 ArrayList<Potion_24129429> potionsToConsume = new ArrayList<>();
                 for (Potion_24129429 potion : potions) {
-                    if (warrior.getPosition().isInNeighborhood(potion.getPos())) {
+                    if (warrior.getPosition().isInNeighborhood(potion.getPosition())) {
                         potionsToConsume.add(potion);
                     }
                 }
@@ -272,7 +273,7 @@ public class Game_24129429 {
         //potions
         if(potions != null){
             for(Potion_24129429 potion : potions){
-                Position_24129429 pos = potion.getPos();
+                Position_24129429 pos = potion.getPosition();
                 board[pos.getX()][pos.getY()] = "p";
             }
         }
@@ -540,11 +541,50 @@ public class Game_24129429 {
     //determines whether game setup file does not violate any game rules
     //terminates program if a rule is broken
     public static void validateCells(){
-        String errorMessage = "Error: multiple %s pieces were configured at the same position on the game grid.";
+        String errorMessage = "Error: multiple %s pieces were configured at the same position on the game grid.\n";
         //Warriors
         validateNumberOfWarriors(false);
-        //Error: multiple < respective piece name > pieces were configured at the same position on the game grid.
-        //Other pieces
+        //Weapon
+        if(weapons != null) {
+            for (int i = 0; i < weapons.size(); i++) {
+                for (int j = i + 1; j < weapons.size(); j++) {
+                    if (weapons.get(i).getPosition().equals(weapons.get(j).getPosition())) {
+                        System.out.printf(errorMessage, "weapon");
+                    }
+                }
+            }
+        }
+        //--------Bonus---------
+        //Potion
+        if(potions != null) {
+            for (int i = 0; i < potions.length; i++) {
+                for (int j = i + 1; j < potions.length; j++) {
+                    if (potions[i].getPosition().equals(potions[j].getPosition())) {
+                        System.out.printf(errorMessage, "potion");
+                    }
+                }
+            }
+        }
+        //Healer
+        ArrayList<Position_24129429> healerPositions = new ArrayList<>();
+        if(restorers != null) {
+            for (Restorer_24129429 restorer : restorers) {
+                healerPositions.add(restorer.getPosition());
+            }
+        }
+        if(peacemakers != null) {
+            for(Position_24129429 peacemaker : peacemakers){
+                healerPositions.add(peacemaker);
+            }
+        }
+        for(int i = 0; i < healerPositions.size(); i++){
+            for(int j = i + 1; j < healerPositions.size(); j++){
+                if(healerPositions.get(i).equals(healerPositions.get(j))){
+                    System.out.printf(errorMessage,"healer");
+                }
+            }
+        }
+
     }
 
     //Determines whether there are more than 10 warriors at any one position.

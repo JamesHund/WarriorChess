@@ -17,7 +17,7 @@ public class Potion_24129429 {
         this.type = pot;
     }
 
-    public Position_24129429 getPos() {
+    public Position_24129429 getPosition() {
         return pos;
     }
 
