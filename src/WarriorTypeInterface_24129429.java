@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public interface WarriorTypeInterface_24129429 {
 
     //Subtype specific methods
@@ -24,6 +26,8 @@ public interface WarriorTypeInterface_24129429 {
 
     boolean isAlive();
 
+    boolean isInvisible();
+
     Weapon_24129429 pickupWeapon(Weapon_24129429 weapon);
 
     void adjustBufferHealth(double value);
@@ -39,6 +43,8 @@ public interface WarriorTypeInterface_24129429 {
     void incrementAge();
     
     void decrementSpecialAbilityCount();
+
+    void consumePotions(ArrayList<Potion> potions);
 
     String toString();
 

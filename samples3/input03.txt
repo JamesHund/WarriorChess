@@ -1,0 +1,6 @@
+5 5 4
+Warrior: 2
+2 2 1 Flame 3 80.5 20 60 2 qw
+0 0 2 Stone 3 60 20 60 2 n
+Potion: 1
+1 0 0

@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class Warrior_24129429 {
@@ -35,6 +36,13 @@ public class Warrior_24129429 {
 	private int specialAbilityCount; //iterations of special ability to be performed
 	private boolean specialAbilityBeingPerformed = false;
 	private boolean specialAbilityPerformed = false;
+
+	//potion related fields
+	private boolean isInTrance = false;
+	private int invisibleIterations = 0; //remaining iterations of effect
+
+	private boolean bufferIsInTrance = false;
+	private int bufferInvisibleIterations = 0;
 
 	//buffer fields
 	private double bufferHealth, bufferOffense, bufferDefense;
@@ -88,6 +96,8 @@ public class Warrior_24129429 {
 	public boolean isAlive() { return alive; }
 
 	public int getNumWeapons() { return Math.min(weaponCounter, maxInvSize);}
+
+	public boolean isInvisible(){ return invisibleIterations > 0; }
 
 	//----------------MODIFIERS---------------------
 
@@ -162,12 +172,19 @@ public class Warrior_24129429 {
 		}
 	}
 
+	//makes the warrior invincible for number of iterations specified by iterations
+	//in the context of the whole application, this is used with peacemakers
+	public void setImmune(int iterations){
+
+	}
+
 	//updates values - to be called at the end of an iteration
 	public void updateValues() {
 		offense = bufferOffense;
 		defense = bufferDefense;
 		health = bufferHealth;
 		weaponCounter = bufferWeaponCounter;
+		invisibleIterations--;
 	}
 
 	public void move(){
@@ -202,6 +219,11 @@ public class Warrior_24129429 {
 				offset = new Position_24129429(0,0);
 				break;
 		}
+		if(isInTrance){
+			int x = offset.getX()*-1;
+			int y = offset.getY()*-1;
+			offset = new Position_24129429(x,y);
+		}
 		//System.out.println("warrior moving" + offset.toString());
 		position = position.add(offset);
 		moveIndex++;
@@ -222,6 +244,50 @@ public class Warrior_24129429 {
 		}
 	}
 
+	//all potions in neighbourhood should be input
+	public void consumePotions(ArrayList<Potion> potions){
+
+		boolean tranceCausingPresent = false;
+		boolean tranceHealingPresent = false;
+		int largestInvisibilityDuration = 0;
+
+
+		for(Potion potion : potions){
+			switch(potion.getType()){
+				case TRANCE_CAUSING:
+					tranceCausingPresent = true;
+					break;
+				case TRANCE_HEALING:
+					tranceHealingPresent = true;
+					break;
+				case INVISIBILITY:
+					InvisibilityPotion temp = (InvisibilityPotion)potion;
+					largestInvisibilityDuration = Math.max(largestInvisibilityDuration, temp.getIterations());
+					//System.out.printf("%s Warrior %s is now invisble for %s iterations (temp = %s)\n", type, id, largestInvisibilityDuration, temp.getIterations());
+					break;
+			}
+		}
+
+
+		//possibly use buffer variables and update in updateValues()
+
+		if(largestInvisibilityDuration > 0){
+			invisibleIterations = largestInvisibilityDuration;
+		}
+
+		if(tranceHealingPresent){
+			isInTrance = false;
+		}else{
+			if(tranceCausingPresent){
+				isInTrance = true;
+			}
+		}
+
+
+
+
+	}
+
 	private void queueSpecialAbility() {
 		specialAbilityCount = specialAbilityTotalCount;
 		specialAbilityBeingPerformed = true;
@@ -239,16 +305,6 @@ public class Warrior_24129429 {
 		}else{
 			maxDefense = MAX_DEFENSE_ZERO;
 		}
-	}
-
-	private double getTotalWeaponOffense(){
-		int max = Math.min(weaponCounter, maxInvSize);
-
-		int totalWeaponOffense = 0;
-		for(int i = 0; i < max; i++){
-			totalWeaponOffense += weapons[i].getOffense();
-		}
-		return totalWeaponOffense;
 	}
 
 	@Override

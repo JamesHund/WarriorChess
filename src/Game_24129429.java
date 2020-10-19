@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PipedOutputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Game_24129429 {
@@ -13,6 +15,9 @@ public class Game_24129429 {
     public static Water_24129429 water;
     public static Crystal_24129429 crystal;
     public static ArrayList<Weapon_24129429> weapons = new ArrayList<>();
+
+    //bonus features
+    public static Potion[] potions;
 
     public static WarriorPosition_24129429[] warriorPositions;
 
@@ -56,7 +61,6 @@ public class Game_24129429 {
         validateCells();
 
         if (outputVersion == 0) { // warrior statistics mode
-            //evaluateRemainingWarriors();
             printStatistics();
             System.out.println();
 
@@ -68,7 +72,6 @@ public class Game_24129429 {
 
         } else if (outputVersion == 1) { // warrior statistics with visualization mode
             printVisualization();
-            //evaluateRemainingWarriors();
             printStatistics();
             System.out.println();
 
@@ -139,14 +142,32 @@ public class Game_24129429 {
                 }
             }
         }
+        //---------------------BONUS-----------------------
+        //apply potion effects to warriors
+        if(potions != null) {
+            for (WarriorTypeInterface_24129429 warrior : warriors) {
+                ArrayList<Potion> potionsToConsume = new ArrayList<>();
+                for (Potion potion : potions) {
+                    if (warrior.getPosition().isInNeighborhood(potion.getPos())) {
+                        potionsToConsume.add(potion);
+                    }
+                }
+                warrior.consumePotions(potionsToConsume);
+
+            }
+        }
+
+        //peacemaker check
 
         //------------------battle stage------------------
         if(!crystalActivated) {
             for (WarriorTypeInterface_24129429 warrior : warriors) {
                 for (WarriorTypeInterface_24129429 warrior2 : warriors) {
                     if (warrior2.getPosition().isInNeighborhood(warrior.getPosition())) {
-                        if (warrior.getDefense() < warrior2.getDefense()) {
-                            warrior.adjustBufferHealth(-1 * warrior2.getOffense());
+                        if(!warrior.isInvisible() && !warrior2.isInvisible()) {
+                            if (warrior.getDefense() < warrior2.getDefense()) {
+                                warrior.adjustBufferHealth(-1 * warrior2.getOffense());
+                            }
                         }
                     }
                 }
@@ -227,6 +248,15 @@ public class Game_24129429 {
                 board[x][y] = ".";
             }
         }
+        //potions
+        if(potions != null){
+            for(Potion potion : potions){
+                Position_24129429 pos = potion.getPos();
+                board[pos.getX()][pos.getY()] = "p";
+            }
+        }
+
+
         //weapons
         if(weapons != null) {
             for (Weapon_24129429 weapon : weapons) {
@@ -415,6 +445,23 @@ public class Game_24129429 {
                             weapons.add(new Weapon_24129429(new Position_24129429(column,row),offense));
                         }
                         performWeaponPickup();
+                        break;
+                    case "Potion":
+                        potions = new Potion[numEntries];
+                        for(int i = 0; i < numEntries; i++){
+                            scLine = new Scanner(scFile.nextLine()).useDelimiter(" ");
+                            int row = scLine.nextInt();
+                            int column = scLine.nextInt();
+                            int type = scLine.nextInt();
+
+                            if(type == Potion.potionType.INVISIBILITY.ordinal()){
+                                int iterations = scLine.nextInt();
+                                potions[i] = new InvisibilityPotion(new Position_24129429(column,row), type, iterations);
+                            }else{
+                                potions[i] = new Potion(new Position_24129429(column,row), type);
+                            }
+
+                        }
                         break;
                 }
             }
