@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Game_24129429 {
@@ -126,7 +127,6 @@ public class Game_24129429 {
         //BONUS -- perform restorer piece buffs
         if(restorers != null) {
             for (Restorer_24129429 restorer : restorers) {
-                int benefit = restorer.getBenefit();
                 Position_24129429[] neighbourhood = restorer.getPosition().getNeighbors();
 
                 for (WarriorTypeInterface_24129429 warrior : getWarriorsAtPositions(neighbourhood)) {
@@ -186,7 +186,7 @@ public class Game_24129429 {
             for (WarriorTypeInterface_24129429 warrior : warriors) {
                 for (WarriorTypeInterface_24129429 warrior2 : warriors) {
                     if (warrior2.getPosition().isInNeighborhood(warrior.getPosition())) {
-                        if(!warrior.isInvisible() && !warrior2.isInvisible()) {
+                        if(warrior.isVisible() && warrior2.isVisible()) {
                             if (warrior.getDefense() < warrior2.getDefense()) {
                                 warrior.adjustBufferHealth(-1 * warrior2.getOffense());
                             }
@@ -370,6 +370,7 @@ public class Game_24129429 {
             }
         }
 
+        assert weapons != null;
         weapons.removeAll(weaponsForRemoval);
         weapons.addAll(weaponsForAddition);
     }
@@ -573,9 +574,7 @@ public class Game_24129429 {
             }
         }
         if(peacemakers != null) {
-            for(Position_24129429 peacemaker : peacemakers){
-                healerPositions.add(peacemaker);
-            }
+            healerPositions.addAll(Arrays.asList(peacemakers));
         }
         for(int i = 0; i < healerPositions.size(); i++){
             for(int j = i + 1; j < healerPositions.size(); j++){

@@ -41,7 +41,7 @@ public class Warrior_24129429 {
 	private boolean isInTrance = false;
 	private int invisibleIterations = 0; //remaining iterations of effect
 
-	//peacemaker fieds
+	//peacemaker fields
 	private boolean isImmune = false;
 
 	//buffer fields
@@ -64,13 +64,12 @@ public class Warrior_24129429 {
 		bufferHealth = this.health;
 		bufferDefense = this.defense;
 		bufferOffense = this.offense;
-		bufferWeaponCounter = this.weaponCounter;
 
 		weapons = new Weapon_24129429[maxInvSize];
 
 		specialAbilityCount = specialAbilityTotalCount;
 
-		if(bufferHealth <= SPECIAL_ABILITY_THRESHOLD && !specialAbilityPerformed) {
+		if(bufferHealth <= SPECIAL_ABILITY_THRESHOLD) {
 			queueSpecialAbility();
 		}
 	}
@@ -98,9 +97,7 @@ public class Warrior_24129429 {
 
 	public int getNumWeapons() { return Math.min(weaponCounter, maxInvSize);}
 
-	public boolean isInvisible(){ return invisibleIterations > 0; }
-
-	public boolean isImmune(){return isImmune;}
+	public boolean isVisible(){ return invisibleIterations <= 0; }
 
 	//----------------MODIFIERS---------------------
 
@@ -121,7 +118,7 @@ public class Warrior_24129429 {
 
 	//returns whether they are alive or not
 	public void adjustBufferHealth(double value){
-		if(!isImmune()) {
+		if(!isImmune) {
 			bufferHealth += value;
 			if (bufferHealth <= 0) {
 				alive = false;

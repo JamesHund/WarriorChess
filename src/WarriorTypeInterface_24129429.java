@@ -20,15 +20,11 @@ public interface WarriorTypeInterface_24129429 {
 
     int getSpecialAbilityCount();
 
-    int getSpecialAbilityTotalCount();
-
     boolean isSpecialAbilityBeingPerformed();
 
     boolean isAlive();
 
-    boolean isInvisible();
-
-    boolean isImmune();
+    boolean isVisible();
 
     Weapon_24129429 pickupWeapon(Weapon_24129429 weapon);
 
