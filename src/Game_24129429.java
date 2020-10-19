@@ -1,8 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PipedOutputStream;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Game_24129429 {
@@ -12,23 +10,25 @@ public class Game_24129429 {
     public static int[] gridSize = new int[2]; // x - 0 (number of columns), y - 1 (number of rows)
 
     public static ArrayList<WarriorTypeInterface_24129429> warriors = new ArrayList<>();
+    public static ArrayList<Weapon_24129429> weapons = new ArrayList<>();
     public static Water_24129429 water;
     public static Crystal_24129429 crystal;
-    public static ArrayList<Weapon_24129429> weapons = new ArrayList<>();
-
-    //bonus features
-    public static Potion[] potions;
 
     public static WarriorPosition_24129429[] warriorPositions;
 
-    public final static String[] typeIndex = new String[]{"Air", "Flame", "Stone", "Water"};
     //constants
+    public final static String[] typeIndex = new String[]{"Air", "Flame", "Stone", "Water"};
     public static final double WATER_HEALTH_BUFF = 3;
     public static final double WATER_HEALTH_DEBUFF = -0.5;
     public static final double MULTIPLE_WARRIORS_HEALTH_BUFF = 2;
     public static final double WATER_WARRIOR_OFFENSE_BUFF = 1;
 
-
+    //bonus features
+    public static Potion_24129429[] potions;
+    public static Restorer_24129429[] restorers;
+    public static Position_24129429[] peacemakers;
+        /*(storing peacemakers as positions because that is the only data that pertains to them)
+        all peacemaker logic is handled within the iterate function */
 
     public static void main(String[] args) {
 
@@ -122,6 +122,18 @@ public class Game_24129429 {
                 warrior.adjustBufferHealth(WATER_HEALTH_DEBUFF);
             }
         }
+        //BONUS -- perform restorer piece buffs
+        if(restorers != null) {
+            for (Restorer_24129429 restorer : restorers) {
+                int benefit = restorer.getBenefit();
+                Position_24129429[] neighbourhood = restorer.getPosition().getNeighbors();
+
+                for (WarriorTypeInterface_24129429 warrior : getWarriorsAtPositions(neighbourhood)) {
+                    warrior.adjustBufferHealth(restorer.getBenefit());
+                }
+            }
+        }
+
 
         //perform special abilities
         for(WarriorTypeInterface_24129429 warrior : warriors){
@@ -146,8 +158,8 @@ public class Game_24129429 {
         //apply potion effects to warriors
         if(potions != null) {
             for (WarriorTypeInterface_24129429 warrior : warriors) {
-                ArrayList<Potion> potionsToConsume = new ArrayList<>();
-                for (Potion potion : potions) {
+                ArrayList<Potion_24129429> potionsToConsume = new ArrayList<>();
+                for (Potion_24129429 potion : potions) {
                     if (warrior.getPosition().isInNeighborhood(potion.getPos())) {
                         potionsToConsume.add(potion);
                     }
@@ -158,6 +170,15 @@ public class Game_24129429 {
         }
 
         //peacemaker check
+        if(peacemakers != null) {
+            for (Position_24129429 peacemaker : peacemakers) {
+                ArrayList<WarriorTypeInterface_24129429> immuneWarriors = getWarriorsAtPositions(peacemaker.getNeighbors());
+                for (WarriorTypeInterface_24129429 warrior : immuneWarriors) {
+                    warrior.setImmune();
+                }
+
+            }
+        }
 
         //------------------battle stage------------------
         if(!crystalActivated) {
@@ -250,7 +271,7 @@ public class Game_24129429 {
         }
         //potions
         if(potions != null){
-            for(Potion potion : potions){
+            for(Potion_24129429 potion : potions){
                 Position_24129429 pos = potion.getPos();
                 board[pos.getX()][pos.getY()] = "p";
             }
@@ -262,6 +283,19 @@ public class Game_24129429 {
             for (Weapon_24129429 weapon : weapons) {
                 Position_24129429 pos = weapon.getPosition();
                 board[pos.getX()][pos.getY()] = "x";
+            }
+        }
+
+        //healers
+        if(peacemakers != null) {
+            for (Position_24129429 peacemaker : peacemakers) {
+                board[peacemaker.getX()][peacemaker.getY()] = "h";
+            }
+        }
+        if(restorers != null) {
+            for (Restorer_24129429 restorer : restorers) {
+                Position_24129429 pos = restorer.getPosition();
+                board[pos.getX()][pos.getY()] = "h";
             }
         }
 
@@ -355,6 +389,7 @@ public class Game_24129429 {
             while (scFile.hasNextLine()) {
 
                 String nextLine = scFile.nextLine();
+                //System.out.println(nextLine);
                 scLine = new Scanner(nextLine).useDelimiter(": ");
 
                 String category = scLine.next();
@@ -408,7 +443,6 @@ public class Game_24129429 {
 
                         //IMPORTANT
                         warriorPositions = WarriorPosition_24129429.getWarriorPositions(warriors);
-
                         break;
                     case "Water":
                         Position_24129429[] positions = new Position_24129429[numEntries];
@@ -447,20 +481,39 @@ public class Game_24129429 {
                         performWeaponPickup();
                         break;
                     case "Potion":
-                        potions = new Potion[numEntries];
+                        potions = new Potion_24129429[numEntries];
                         for(int i = 0; i < numEntries; i++){
                             scLine = new Scanner(scFile.nextLine()).useDelimiter(" ");
                             int row = scLine.nextInt();
                             int column = scLine.nextInt();
                             int type = scLine.nextInt();
 
-                            if(type == Potion.potionType.INVISIBILITY.ordinal()){
+                            if(type == Potion_24129429.potionType.INVISIBILITY.ordinal()){
                                 int iterations = scLine.nextInt();
                                 potions[i] = new InvisibilityPotion(new Position_24129429(column,row), type, iterations);
                             }else{
-                                potions[i] = new Potion(new Position_24129429(column,row), type);
+                                potions[i] = new Potion_24129429(new Position_24129429(column,row), type);
                             }
 
+                        }
+                        break;
+                    case "Restorer":
+                        restorers = new Restorer_24129429[numEntries];
+                        for(int i = 0; i < numEntries; i++){
+                            scLine = new Scanner(scFile.nextLine()).useDelimiter(" ");
+                            int row = scLine.nextInt();
+                            int column = scLine.nextInt();
+                            int benefit = scLine.nextInt();
+                            restorers[i] = new Restorer_24129429(new Position_24129429(column,row), benefit);
+                        }
+                        break;
+                    case "Peacemaker":
+                        peacemakers = new Position_24129429[numEntries];
+                        for(int i = 0; i < numEntries; i++){
+                            scLine = new Scanner(scFile.nextLine()).useDelimiter(" ");
+                            int row = scLine.nextInt();
+                            int column = scLine.nextInt();
+                            peacemakers[i] = new Position_24129429(column,row);
                         }
                         break;
                 }

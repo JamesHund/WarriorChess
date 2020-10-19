@@ -28,6 +28,8 @@ public interface WarriorTypeInterface_24129429 {
 
     boolean isInvisible();
 
+    boolean isImmune();
+
     Weapon_24129429 pickupWeapon(Weapon_24129429 weapon);
 
     void adjustBufferHealth(double value);
@@ -35,6 +37,8 @@ public interface WarriorTypeInterface_24129429 {
     void adjustBufferOffense(double value);
 
     void adjustBufferDefense(double value);
+
+    void setImmune();
 
     void updateValues();
 
@@ -44,7 +48,7 @@ public interface WarriorTypeInterface_24129429 {
     
     void decrementSpecialAbilityCount();
 
-    void consumePotions(ArrayList<Potion> potions);
+    void consumePotions(ArrayList<Potion_24129429> potions);
 
     String toString();
 

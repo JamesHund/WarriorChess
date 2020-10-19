@@ -1,4 +1,4 @@
-public class InvisibilityPotion extends Potion{
+public class InvisibilityPotion extends Potion_24129429 {
 
 
     private int iterations;

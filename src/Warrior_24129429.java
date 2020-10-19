@@ -41,12 +41,13 @@ public class Warrior_24129429 {
 	private boolean isInTrance = false;
 	private int invisibleIterations = 0; //remaining iterations of effect
 
-	private boolean bufferIsInTrance = false;
-	private int bufferInvisibleIterations = 0;
+	//peacemaker fieds
+	private boolean isImmune = false;
 
 	//buffer fields
 	private double bufferHealth, bufferOffense, bufferDefense;
 	private int bufferWeaponCounter;
+
 
 	public Warrior_24129429(Position_24129429 position, int id, int age, double health, double offense, double defense, String type, int specialAbilityTotalCount, int maxInvSize, String moves) {
 		this.position = position;
@@ -99,6 +100,8 @@ public class Warrior_24129429 {
 
 	public boolean isInvisible(){ return invisibleIterations > 0; }
 
+	public boolean isImmune(){return isImmune;}
+
 	//----------------MODIFIERS---------------------
 
 	//add weapon to player inventory
@@ -118,13 +121,15 @@ public class Warrior_24129429 {
 
 	//returns whether they are alive or not
 	public void adjustBufferHealth(double value){
-		bufferHealth += value;
-		if(bufferHealth <= 0){
-			alive = false;
-		}else if(bufferHealth <= SPECIAL_ABILITY_THRESHOLD && !specialAbilityPerformed){
-			queueSpecialAbility();
-		}else if(bufferHealth > MAX_HEALTH){
-			bufferHealth = MAX_HEALTH;
+		if(!isImmune()) {
+			bufferHealth += value;
+			if (bufferHealth <= 0) {
+				alive = false;
+			} else if (bufferHealth <= SPECIAL_ABILITY_THRESHOLD && !specialAbilityPerformed) {
+				queueSpecialAbility();
+			} else if (bufferHealth > MAX_HEALTH) {
+				bufferHealth = MAX_HEALTH;
+			}
 		}
 	}
 
@@ -172,10 +177,10 @@ public class Warrior_24129429 {
 		}
 	}
 
-	//makes the warrior invincible for number of iterations specified by iterations
+	//makes the warrior invincible for the current iteration
 	//in the context of the whole application, this is used with peacemakers
-	public void setImmune(int iterations){
-
+	public void setImmune(){
+		isImmune = true;
 	}
 
 	//updates values - to be called at the end of an iteration
@@ -185,6 +190,7 @@ public class Warrior_24129429 {
 		health = bufferHealth;
 		weaponCounter = bufferWeaponCounter;
 		invisibleIterations--;
+		isImmune = false;
 	}
 
 	public void move(){
@@ -245,14 +251,14 @@ public class Warrior_24129429 {
 	}
 
 	//all potions in neighbourhood should be input
-	public void consumePotions(ArrayList<Potion> potions){
+	public void consumePotions(ArrayList<Potion_24129429> potions){
 
 		boolean tranceCausingPresent = false;
 		boolean tranceHealingPresent = false;
 		int largestInvisibilityDuration = 0;
 
 
-		for(Potion potion : potions){
+		for(Potion_24129429 potion : potions){
 			switch(potion.getType()){
 				case TRANCE_CAUSING:
 					tranceCausingPresent = true;

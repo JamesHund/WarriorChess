@@ -16,7 +16,12 @@ public class Water_24129429 {
     public void populateGrid(Position_24129429[] waterLocations){
         if(waterLocations != null) {
             for (Position_24129429 position : waterLocations) {
-                grid[position.getX()][position.getY()] = true;
+                if(!grid[position.getX()][position.getY()]) {
+                    grid[position.getX()][position.getY()] = true;
+                }else{
+                    System.out.println("Error: multiple water pieces were configured at the same position on the game grid.");
+                    System.exit(0);
+                }
             }
         }
     }
